@@ -153,7 +153,7 @@
     .event-logo {
       position: relative;
       top: -50px; /* más arriba */
-      width: 320px; /* más grande */
+      width: 1000px; /* más grande */
       margin-bottom: 20px;
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -278,7 +278,7 @@
         alert("Por favor, selecciona un evento primero.");
         return;
       }
-      const servidor = "minecraft://?addExternalServer=" + selectedServer + "|na81.aternos.me:60240";
+      const servidor = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240" + selectedServer + "|na81.aternos.me:60240";
       window.location.href = servidor;
     }
   </script>
