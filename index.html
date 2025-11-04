@@ -1,122 +1,379 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ethernal Client 0.1</title>
-  <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+
   <style>
-    @keyframes glow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
-      50% { filter: drop-shadow(0 0 25px rgba(255,255,255,0.8)); }
-    }
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-    body {
-      height: 100vh;
-      font-family: "Poppins", sans-serif;
-      background: url("https://i.imgur.com/9qkK0kl.png") no-repeat center center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
       color: white;
     }
-    #login-screen, #launcher {
+
+    body {
+      background: linear-gradient(135deg, #3d0066, #0f001a);
+      background-size: cover;
+      overflow: hidden;
+    }
+
+    /* Fondo con imagen */
+    body::before {
+      content: "";
       position: absolute;
-      inset: 0;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url("fondo.jpg") center/cover no-repeat;
+      opacity: 0.25;
+      z-index: -1;
+    }
+
+    /* Pantalla de login */
+    #loginScreen {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(5px);
+      height: 100vh;
       transition: opacity 0.6s ease;
     }
-    #login-screen.hidden, #launcher.hidden {
+
+    #loginLogo {
+      width: 160px;
+      margin-bottom: 30px;
+      filter: drop-shadow(0 0 10px #fff);
+      animation: logoGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes logoGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px #fff); }
+      50% { filter: drop-shadow(0 0 25px #fff); }
+    }
+
+    .login-btn {
+      background: #d4af37;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #d4af37a8;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #ffdc73;
+      box-shadow: 0 0 25px #fff;
+    }
+
+    /* Launcher */
+    #launcher {
       opacity: 0;
       pointer-events: none;
+      transition: opacity 0.8s ease;
+      display: flex;
+      height: 100vh;
     }
-    img.logo {
+
+    #launcher.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Panel lateral */
+    .sidebar {
+      width: 110px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 25px 0;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+    }
+
+    .event-icon {
+      width: 70px;
+      height: 70px;
+      margin: 15px 0;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+      cursor: pointer;
+      box-shadow: 0 0 10px transparent;
+    }
+
+    .event-icon img {
+      width: 55px;
+      height: 55px;
+      border-radius: 12px;
+    }
+
+    .event-icon:hover, .event-icon.active {
+      box-shadow: 0 0 25px #ffffff;
+      transform: scale(1.05);
+    }
+
+    .account {
+      text-align: center;
+      opacity: 0.7;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    /* Contenido principal */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .launcher-logo {
       width: 200px;
-      margin-bottom: 25px;
-      animation: glow 4s infinite ease-in-out;
+      filter: drop-shadow(0 0 8px #fff);
+      animation: logoGlow 4s ease-in-out infinite;
     }
+
     h1 {
       font-size: 2em;
-      color: #ffd700;
-      text-shadow: 0 0 10px #fff;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      letter-spacing: 2px;
+      color: #ffcc4d;
+      text-shadow: 0 0 10px #ffcc4d;
     }
-    button {
-      background: linear-gradient(90deg, #c7a600, #ffd700);
-      color: black;
+
+    .play-btn {
+      margin-top: 40px;
+      background: #d4af37;
       border: none;
-      padding: 14px 28px;
+      padding: 15px 40px;
       border-radius: 10px;
-      font-size: 1.1em;
+      font-size: 20px;
       cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 20px #d4af37;
+      transition: all 0.3s ease;
     }
-    button:hover {
+
+    .play-btn:hover {
+      background: #ffdc73;
+      box-shadow: 0 0 30px #fff;
       transform: scale(1.05);
-      box-shadow: 0 0 20px #ffd700aa;
     }
   </style>
+
+  <!-- MSAL -->
+  <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
 </head>
+
 <body>
   <!-- Pantalla de Login -->
-  <div id="login-screen">
-    <img src="https://i.imgur.com/wmTCE05.png" alt="Logo Ethernal" class="logo">
-    <h1>Ethernal Client 0.1</h1>
-    <button id="login-btn">Iniciar sesión con Microsoft</button>
+  <div id="loginScreen">
+    <img id="loginLogo" src="logo.png" alt="Logo Ethernal" />
+    <button class="login-btn" id="loginBtn">Iniciar sesión con Microsoft</button>
   </div>
 
   <!-- Launcher principal -->
-  <div id="launcher" class="hidden">
-    <img src="https://i.imgur.com/wmTCE05.png" alt="Logo Ethernal" class="logo">
-    <h1>Ethernal Client 0.1</h1>
-    <p>Bienvenido al cliente oficial</p>
-    <button onclick="abrirMinecraft()">Jugar</button>
+  <div id="launcher">
+    <div class="sidebar">
+      <div>
+        <div class="event-icon active" data-event="pesadilla">
+          <img src="pesadilla.png" alt="Pesadilla Hardcore" />
+        </div>
+        <div class="event-icon" data-event="build">
+          <img src="build.png" alt="Build Ethernal Battle" />
+        </div>
+        <div class="event-icon" data-event="infeccion">
+          <img src="infeccion.png" alt="Infección Hardcore" />
+        </div>
+      </div>
+      <div class="account" id="accountInfo">No conectado</div>
+    </div>
+
+    <div class="main-content">
+      <img src="logo.png" class="launcher-logo" alt="Ethernal Logo" />
+      <h1 id="eventTitle">Pesadilla Hardcore</h1>
+      <button class="play-btn" id="playBtn">JUGAR</button>
+    </div>
   </div>
 
   <script>
     const msalConfig = {
       auth: {
         clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
-        authority: "https://login.microsoftonline.com/consumers/",
+        authority: "https://login.microsoftonline.com/common",
         redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
       }
     };
 
     const msalInstance = new msal.PublicClientApplication(msalConfig);
-    const loginScreen = document.getElementById("login-screen");
+    const loginScreen = document.getElementById("loginScreen");
     const launcher = document.getElementById("launcher");
+    const accountInfo = document.getElementById("accountInfo");
 
-    async function iniciarSesion() {
-      try {
-        const loginResponse = await msalInstance.loginPopup({
-          scopes: ["User.Read"]
-        });
-        console.log("Sesión iniciada como:", loginResponse.account.username);
-        loginScreen.classList.add("hidden");
+    let selectedEvent = "pesadilla";
+
+    msalInstance.handleRedirectPromise().then(response => {
+      if (response) {
+        const account = response.account;
+        msalInstance.setActiveAccount(account);
+        showLauncher(account);
+      } else {
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          msalInstance.setActiveAccount(accounts[0]);
+          showLauncher(accounts[0]);
+        }
+      }
+    });
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      msalInstance.loginRedirect({ scopes: ["User.Read"] });
+    });
+
+    function showLauncher(account) {
+      loginScreen.style.opacity = 0;
+      setTimeout(() => {
+        loginScreen.style.display = "none";
+        launcher.classList.add("active");
+      }, 600);
+
+      if (account) accountInfo.textContent = account.username;
+    }
+
+    // Cambio de evento
+    const icons = document.querySelectorAll(".event-icon");
+    const eventTitle = document.getElementById("eventTitle");
+
+    icons.forEach(icon => {
+      icon.addEventListener("click", () => {
+        icons.forEach(i => i.classList.remove("active"));
+        icon.classList.add("active");
+        selectedEvent = icon.dataset.event;
+
+        let titleText = "";
+        if (selectedEvent === "pesadilla") titleText = "Pesadilla Hardcore";
+        if (selectedEvent === "build") titleText = "Build Ethernal Battle";
+        if (selectedEvent === "infeccion") titleText = "Infección Hardcore";
+
+        eventTitle.style.opacity = 0;
         setTimeout(() => {
-          launcher.classList.remove("hidden");
-        }, 600);
-      } catch (error) {
-        alert("Error al iniciar sesión: " + error);
+          eventTitle.textContent = titleText;
+          eventTitle.style.opacity = 1;
+        }, 300);
+      });
+    });
+
+    // Botón JUGAR
+    document.getElementById("playBtn").addEventListener("click", () => {
+      window.location.href = "minecraft://?addExternalServer=Ethernal|na81.aternos.me:60240";
+    });
+  <script>
+  const msalConfig = {
+    auth: {
+      clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+      authority: "https://login.microsoftonline.com/common",
+      redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+    }
+  };
+
+  const msalInstance = new msal.PublicClientApplication(msalConfig);
+  const loginScreen = document.getElementById("loginScreen");
+  const launcher = document.getElementById("launcher");
+  const accountInfo = document.getElementById("accountInfo");
+  const launcherLogo = document.querySelector(".launcher-logo");
+  const eventTitle = document.getElementById("eventTitle");
+
+  let selectedEvent = "pesadilla";
+
+  msalInstance.handleRedirectPromise().then(response => {
+    if (response) {
+      const account = response.account;
+      msalInstance.setActiveAccount(account);
+      showLauncher(account);
+    } else {
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        msalInstance.setActiveAccount(accounts[0]);
+        showLauncher(accounts[0]);
       }
     }
+  });
 
-    function abrirMinecraft() {
-      const enlace = "minecraft://?addExternalServer=Ethernal|na81.aternos.me:60240";
-      window.location.href = enlace;
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    msalInstance.loginRedirect({ scopes: ["User.Read"] });
+  });
+
+  function showLauncher(account) {
+    loginScreen.style.opacity = 0;
+    setTimeout(() => {
+      loginScreen.style.display = "none";
+      launcher.classList.add("active");
+    }, 600);
+    if (account) accountInfo.textContent = account.username;
+  }
+
+  // 🎮 CONFIGURACIÓN DE SERVIDORES
+  const servidores = {
+    pesadilla: {
+      nombre: "Pesadilla Hardcore",
+      ip: "na81.aternos.me",
+      puerto: "60240",
+      logo: "pesadilla_logo.png"
+    },
+    build: {
+      nombre: "Build Ethernal Battle",
+      ip: "ethernalbuild.aternos.me",
+      puerto: "19132",
+      logo: "build_logo.png"
+    },
+    infeccion: {
+      nombre: "Infección Hardcore",
+      ip: "infeccionethernal.aternos.me",
+      puerto: "19133",
+      logo: "infeccion_logo.png"
     }
+  };
 
-    document.getElementById("login-btn").addEventListener("click", iniciarSesion);
-  </script>
+  // 🔄 Cambio de evento (logo + efecto fade)
+  const icons = document.querySelectorAll(".event-icon");
+
+  icons.forEach(icon => {
+    icon.addEventListener("click", () => {
+      icons.forEach(i => i.classList.remove("active"));
+      icon.classList.add("active");
+      selectedEvent = icon.dataset.event;
+
+      const event = servidores[selectedEvent];
+
+      // Desaparece suavemente el logo y texto
+      launcherLogo.style.opacity = 0;
+      eventTitle.style.opacity = 0;
+
+      setTimeout(() => {
+        // Cambia el logo por el del evento
+        launcherLogo.src = event.logo;
+        // Elimina el texto (queda vacío)
+        eventTitle.textContent = "";
+        launcherLogo.style.opacity = 1;
+      }, 300);
+    });
+  });
+
+  // 🎮 Botón JUGAR → conecta al servidor correspondiente
+  document.getElementById("playBtn").addEventListener("click", () => {
+    const server = servidores[selectedEvent];
+    const url = `minecraft://?addExternalServer=${encodeURIComponent(server.nombre)}|${server.ip}:${server.puerto}`;
+    window.location.href = url;
+  });
+</script>
 </body>
 </html>
