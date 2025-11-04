@@ -380,35 +380,5 @@
     window.location.href = url;
   });
 <script>
-  const msalConfig = {
-    auth: {
-      clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
-      authority: "https://login.microsoftonline.com/common",
-      redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
-    }
-  };
-
-  const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-  async function handleLogin() {
-    try {
-      const loginResponse = await msalInstance.loginPopup({
-        scopes: ["User.Read"]
-      });
-
-      console.log("Login Response:", loginResponse);
-
-      const account = loginResponse.account;
-      document.getElementById("loginPanel").style.display = "none";
-      document.getElementById("launcherPanel").style.display = "flex";
-      document.getElementById("userName").textContent = account.username;
-    } catch (err) {
-      console.error("Error al iniciar sesión:", err);
-      alert("Error al iniciar sesión: " + err.message);
-    }
-  }
-
-  document.getElementById("loginBtn").addEventListener("click", handleLogin);
-</script>
 </body>
 </html>
