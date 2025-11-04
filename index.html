@@ -99,7 +99,7 @@
     async function iniciarSesion() {
       try {
         const loginResponse = await msalInstance.loginPopup({
-          scopes: ["XboxLive.signin", "User.Read"]
+          scopes: ["User.Read"]
         });
         console.log("Sesión iniciada como:", loginResponse.account.username);
         loginScreen.classList.add("hidden");
