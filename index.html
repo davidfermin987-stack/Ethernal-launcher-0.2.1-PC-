@@ -25,7 +25,6 @@
       transition: background-image 1s ease;
     }
 
-    /* Panel de login */
     #loginPanel {
       display: flex;
       flex-direction: column;
@@ -69,7 +68,6 @@
       transform: scale(1.05);
     }
 
-    /* Panel del launcher */
     #launcherPanel {
       display: none;
       width: 100%;
@@ -83,7 +81,6 @@
       animation: fadeIn 1.5s ease;
     }
 
-    /* Logo grande arriba */
     #launcherPanel img.logo {
       width: 300px;
       margin-top: 30px;
@@ -91,7 +88,6 @@
       animation: pulseGlow 5s infinite;
     }
 
-    /* Barra lateral izquierda */
     .sidebar {
       position: absolute;
       left: 40px;
@@ -133,7 +129,6 @@
       margin-bottom: 8px;
     }
 
-    /* Panel principal */
     .main {
       flex: 1;
       display: flex;
@@ -150,6 +145,15 @@
       margin-bottom: 30px;
       text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
       transition: opacity 0.5s ease;
+    }
+
+    /* Logo dinámico de evento */
+    .event-logo {
+      width: 250px;
+      margin-bottom: 30px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      filter: drop-shadow(0 0 15px rgba(255,255,255,0.7));
     }
 
     .play-btn {
@@ -186,27 +190,26 @@
 </head>
 <body>
 
-  <!-- Panel de inicio de sesión -->
   <div id="loginPanel">
     <img src="logo.png" alt="Logo Ethernal" />
     <h1>Ethernal Client 0.1</h1>
     <button id="loginBtn">Iniciar sesión con Microsoft</button>
   </div>
 
-  <!-- Panel del launcher -->
   <div id="launcherPanel">
     <img src="logo.png" class="logo" alt="Logo Ethernal" />
     
     <div class="sidebar">
       <div class="server-icons">
-        <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectServer('Pesadilla Hardcore', 'fondo_pesadilla.png')">
-        <img src="build.png" alt="Build Ethernal Battle" onclick="selectServer('Build Ethernal Battle', 'fondo_build.png')">
-        <img src="infeccion.png" alt="Infección Hardcore" onclick="selectServer('Infección Hardcore', 'fondo_infeccion.png')">
+        <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectServer('Pesadilla Hardcore', 'fondo_pesadilla.png', 'logo_pesadilla.png')">
+        <img src="build.png" alt="Build Ethernal Battle" onclick="selectServer('Build Ethernal Battle', 'fondo_build.png', 'logo_build.png')">
+        <img src="infeccion.png" alt="Infección Hardcore" onclick="selectServer('Infección Hardcore', 'fondo_infeccion.png', 'logo_infeccion.png')">
       </div>
     </div>
 
     <div class="main">
       <h1 id="serverTitle">Selecciona un evento</h1>
+      <img id="eventLogo" class="event-logo" src="" alt="">
       <button class="play-btn" onclick="entrarServidor()">JUGAR</button>
     </div>
 
@@ -244,15 +247,24 @@
     });
 
     let selectedServer = null;
-    function selectServer(serverName, fondo) {
+    function selectServer(serverName, fondo, logo) {
       selectedServer = serverName;
       const title = document.getElementById("serverTitle");
+      const eventLogo = document.getElementById("eventLogo");
+
+      // Ocultar texto
       title.style.opacity = 0;
-      setTimeout(() => {
-        title.textContent = serverName;
-        title.style.opacity = 1;
-      }, 300);
+      setTimeout(() => { title.textContent = ""; }, 300);
+
+      // Cambiar fondo
       document.body.style.backgroundImage = `url('${fondo}')`;
+
+      // Cambiar logo del evento
+      eventLogo.src = logo;
+      eventLogo.style.opacity = 0;
+      setTimeout(() => {
+        eventLogo.style.opacity = 1;
+      }, 400);
     }
 
     function entrarServidor() {
