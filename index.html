@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ethernal Client 0.1</title>
-  <link rel="icon" href="🔥" />
-  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
-  <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
-    body {background:url('fondo.png') no-repeat center center/cover;height:100vh;display:flex;justify-content:center;align-items:center;color:#fff;overflow:hidden;transition:background-image 1s ease;}
-    #loginPanel {display:flex;flex-direction:column;align-items:center;text-align:center;backdrop-filter:blur(10px);background:rgba(0,0,0,0.5);padding:50px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,100,0.5);animation:fadeIn 1.5s ease;}
-    #loginPanel img {width:180px;margin-bottom:20px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.7));animation:pulseGlow 4s infinite;}
-    #loginPanel h1 {color:#00bfff;font-size:2em;margin-bottom:20px;text-shadow:0 0 10px rgba(0,191,255,0.7);}
-    #loginBtn {padding:14px 30px;background:rgba(0,40,90,0.6);color:#fff;border:1px solid rgba(0,191,255,0.6);border-radius:12px;font-size:1em;cursor:pointer;transition:0.3s;}
-    #loginBtn:hover {background:rgba(0,90,160,0.8);transform:scale(1.05);}
-    #launcherPanel {display:none;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;backdrop-filter:blur(5px);animation:fadeIn 1.5s ease;}
-    #launcherPanel img.logo {width:300px;margin-top:30px;filter:drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));animation:pulseGlow 5s infinite;transition:opacity 0.8s ease;}
-    .sidebar {position:absolute;left:40px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:25px;}
-    .server-icons img {width:80px;height:80px;border-radius:50%;cursor:pointer;transition:0.3s ease;box-shadow:0 0 15px rgba(255,255,255,0.3);animation:glowPulse 5s infinite;}
-    .server-icons img:hover {transform:scale(1.1);box-shadow:0 0 25px white;}
-    .user-section {position:absolute;bottom:40px;left:40px;text-align:center;color:#00bfff;font-size:0.9em;}
-    .user-section img {width:50px;border-radius:50%;margin-bottom:8px;}
-    .main {flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;}
-    .main h1 {font-size:3em;color:#00bfff;margin-top:40px;margin-bottom:30px;text-shadow:0 0 10px rgba(0,191,255,0.7);transition:opacity 0.5s ease;}
-    .event-logo {position:relative;top:-120px;width:500px;margin-bottom:20px;opacity:0;transition:opacity 0.8s ease;filter:drop-shadow(0 0 15px rgba(255,255,255,0.7));}
-    .play-btn {padding:18px 40px;background:rgba(0,40,90,0.6);border:1px solid rgba(0,191,255,0.6);border-radius:15px;color:white;font-size:1.3em;cursor:pointer;transition:0.3s;}
-    .play-btn:hover {background:rgba(0,90,160,0.8);transform:scale(1.05);}
-    @keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
-    @keyframes pulseGlow {0%,100%{filter:drop-shadow(0 0 5px rgba(255,255,255,0.7));}50%{filter:drop-shadow(0 0 15px rgba(255,255,255,0.9));}}
-    @keyframes glowPulse {0%,100%{box-shadow:0 0 10px rgba(255,255,255,0.2);}50%{box-shadow:0 0 25px rgba(255,255,255,0.9);}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethernal Client 0.1</title>
+<link rel="icon" href="🔥" />
+<script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
+<style>
+  * {margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
+  body {background:url('fondo.png') no-repeat center center/cover;height:100vh;display:flex;justify-content:center;align-items:center;color:#fff;overflow:hidden;transition:background-image 1s ease;}
+  #loginPanel {display:flex;flex-direction:column;align-items:center;text-align:center;backdrop-filter:blur(10px);background:rgba(0,0,0,0.5);padding:50px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,100,0.5);animation:fadeIn 1.5s ease;}
+  #loginPanel img {width:180px;margin-bottom:20px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.7));animation:pulseGlow 4s infinite;}
+  #loginPanel h1 {color:#00bfff;font-size:2em;margin-bottom:20px;text-shadow:0 0 10px rgba(0,191,255,0.7);}
+  #loginBtn {padding:14px 30px;background:rgba(0,40,90,0.6);color:#fff;border:1px solid rgba(0,191,255,0.6);border-radius:12px;font-size:1em;cursor:pointer;transition:0.3s;}
+  #loginBtn:hover {background:rgba(0,90,160,0.8);transform:scale(1.05);}
+  #launcherPanel {display:none;width:100%;height:100%;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;backdrop-filter:blur(5px);animation:fadeIn 1.5s ease;}
+  #launcherPanel img.logo {width:300px;margin-top:30px;filter:drop-shadow(0 0 15px rgba(255,255,255,0.8));animation:pulseGlow 5s infinite;transition:opacity 0.8s ease;}
+  .sidebar {position:absolute;left:40px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:25px;}
+  .server-icons img {width:80px;height:80px;border-radius:50%;cursor:pointer;transition:0.3s ease;box-shadow:0 0 15px rgba(255,255,255,0.3);animation:glowPulse 5s infinite;}
+  .server-icons img:hover {transform:scale(1.1);box-shadow:0 0 25px white;}
+  .user-section {position:absolute;bottom:40px;left:40px;text-align:center;color:#00bfff;font-size:0.9em;}
+  .user-section img {width:50px;border-radius:50%;margin-bottom:8px;}
+  .main {flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;}
+  .main h1 {font-size:3em;color:#00bfff;margin-top:40px;margin-bottom:30px;text-shadow:0 0 10px rgba(0,191,255,0.7);transition:opacity 0.5s ease;}
+  .event-logo {position:relative;top:-120px;width:500px;margin-bottom:20px;opacity:0;transition:opacity 0.8s ease;filter:drop-shadow(0 0 15px rgba(255,255,255,0.7));}
+  .play-btn {padding:18px 40px;background:rgba(0,40,90,0.6);border:1px solid rgba(0,191,255,0.6);border-radius:15px;color:white;font-size:1.3em;cursor:pointer;transition:0.3s;}
+  .play-btn:hover {background:rgba(0,90,160,0.8);transform:scale(1.05);}
+  @keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
+  @keyframes pulseGlow {0%,100%{filter:drop-shadow(0 0 5px rgba(255,255,255,0.7));}50%{filter:drop-shadow(0 0 15px rgba(255,255,255,0.9));}}
+  @keyframes glowPulse {0%,100%{box-shadow:0 0 10px rgba(255,255,255,0.2);}50%{box-shadow:0 0 25px rgba(255,255,255,0.9);}}
+</style>
 </head>
 <body>
 
@@ -73,6 +73,7 @@
   };
   const msalInstance = new msal.PublicClientApplication(msalConfig);
 
+  // Login Microsoft
   document.getElementById("loginBtn").addEventListener("click", async () => {
     try {
       const loginResponse = await msalInstance.loginPopup({ scopes: ["User.Read"] });
@@ -86,6 +87,7 @@
     }
   });
 
+  // Servidor seleccionado
   let selectedServer = null;
 
   function selectServer(serverName, fondo, logo) {
@@ -94,32 +96,26 @@
     const eventLogo = document.getElementById("eventLogo");
     const mainLogo = document.getElementById("mainLogo");
 
-    // Ocultar texto y logo principal
     title.style.opacity = 0;
     mainLogo.style.opacity = 0;
     setTimeout(() => { title.textContent = ""; }, 300);
 
-    // Cambiar fondo
     document.body.style.backgroundImage = url('${fondo}');
-
-    // Cambiar logo del evento
     eventLogo.src = logo;
     eventLogo.style.opacity = 0;
     setTimeout(() => { eventLogo.style.opacity = 1; }, 400);
   }
 
-  // URLs Minecraft Bedrock
+  // URLs Minecraft
   const minecraftUrls = {
     "Pesadilla Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
     "Infección Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
     "Build Ethernal Battle": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240"
   };
 
+  // Entrar a Minecraft
   function entrarServidor() {
-    if (!selectedServer) {
-      alert("Por favor, selecciona un evento primero.");
-      return;
-    }
+    if (!selectedServer) { alert("Por favor, selecciona un evento primero."); return; }
     const url = minecraftUrls[selectedServer];
     if (!url) { alert("No se encontró URL para este evento."); return; }
 
