@@ -86,6 +86,7 @@
       margin-top: 30px;
       filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
       animation: pulseGlow 5s infinite;
+      transition: opacity 0.8s ease;
     }
 
     .sidebar {
@@ -136,6 +137,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      position: relative;
     }
 
     .main h1 {
@@ -149,8 +151,10 @@
 
     /* Logo dinámico de evento */
     .event-logo {
-      width: 250px;
-      margin-bottom: 30px;
+      position: relative;
+      top: -50px; /* más arriba */
+      width: 320px; /* más grande */
+      margin-bottom: 20px;
       opacity: 0;
       transition: opacity 0.8s ease;
       filter: drop-shadow(0 0 15px rgba(255,255,255,0.7));
@@ -197,7 +201,7 @@
   </div>
 
   <div id="launcherPanel">
-    <img src="logo.png" class="logo" alt="Logo Ethernal" />
+    <img id="mainLogo" src="logo.png" class="logo" alt="Logo Ethernal" />
     
     <div class="sidebar">
       <div class="server-icons">
@@ -251,9 +255,11 @@
       selectedServer = serverName;
       const title = document.getElementById("serverTitle");
       const eventLogo = document.getElementById("eventLogo");
+      const mainLogo = document.getElementById("mainLogo");
 
-      // Ocultar texto
+      // Ocultar texto y logo principal
       title.style.opacity = 0;
+      mainLogo.style.opacity = 0;
       setTimeout(() => { title.textContent = ""; }, 300);
 
       // Cambiar fondo
