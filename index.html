@@ -1,195 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ethernal Client 0.1 - Login</title>
-<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: url('fondo.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-    overflow: hidden;
-  }
-
-  .fade-in { animation: fadeIn 1s ease forwards; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .login-container {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    z-index: 10;
-  }
-
-  .login-container h1 {
-    font-size: 2rem;
-    margin-bottom: 25px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
-  }
-
-  .login-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    padding: 12px 40px;
-    border-radius: 10px;
-    color: white;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .login-btn:hover {
-    background: rgba(255,255,255,0.25);
-    box-shadow: 0 0 20px rgba(255,255,255,0.8);
-  }
-
-  /* Launcher principal */
-  .launcher {
-    display: none;
-    flex-direction: row;
-    height: 100vh;
-  }
-  .sidebar {
-    width: 90px;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(8px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 0;
-  }
-  .icon {
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    margin: 10px 0;
-    transition: 0.3s;
-  }
-  .icon:hover {
-    box-shadow: 0 0 15px white;
-    transform: scale(1.05);
-  }
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .logo {
-    width: 300px;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
-    animation: pulseGlow 5s ease-in-out infinite;
-  }
-  @keyframes pulseGlow {
-    0%,100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-    50% { filter: drop-shadow(0 0 25px rgba(255,255,255,0.8)); }
-  }
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-top: 15px;
-    letter-spacing: 2px;
-  }
-  .play-btn {
-    margin-top: 40px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    padding: 12px 40px;
-    border-radius: 15px;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: 0.3s ease;
-  }
-  .play-btn:hover {
-    background: rgba(255,255,255,0.25);
-    box-shadow: 0 0 20px rgba(255,255,255,0.8);
-  }
-  footer {
-    position: absolute;
-    bottom: 15px;
-    right: 20px;
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.6);
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethernal Client 0.1</title>
+  <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+  <style>
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255,255,255,0.8)); }
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      height: 100vh;
+      font-family: "Poppins", sans-serif;
+      background: url("https://i.imgur.com/9qkK0kl.png") no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    #login-screen, #launcher {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      transition: opacity 0.6s ease;
+    }
+    #login-screen.hidden, #launcher.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    img.logo {
+      width: 200px;
+      margin-bottom: 25px;
+      animation: glow 4s infinite ease-in-out;
+    }
+    h1 {
+      font-size: 2em;
+      color: #ffd700;
+      text-shadow: 0 0 10px #fff;
+      margin-bottom: 20px;
+    }
+    button {
+      background: linear-gradient(90deg, #c7a600, #ffd700);
+      color: black;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1.1em;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #ffd700aa;
+    }
+  </style>
 </head>
 <body>
-
-<!-- Pantalla de login -->
-<div class="login-container fade-in" id="loginScreen">
-  <h1>Iniciar sesión con Microsoft</h1>
-  <button class="login-btn" id="loginBtn">Iniciar sesión</button>
-</div>
-
-<!-- Launcher principal -->
-<div class="launcher" id="launcher">
-  <div class="sidebar">
-    <div>
-      <img src="icon1.png" class="icon">
-      <img src="icon2.png" class="icon">
-    </div>
-    <img src="perfil.png" class="icon">
+  <!-- Pantalla de Login -->
+  <div id="login-screen">
+    <img src="https://i.imgur.com/wmTCE05.png" alt="Logo Ethernal" class="logo">
+    <h1>Ethernal Client 0.1</h1>
+    <button id="login-btn">Iniciar sesión con Microsoft</button>
   </div>
 
-  <div class="main">
-    <img src="logo.png" class="logo">
-    <div class="title">Ethernal Client 0.1</div>
-    <button class="play-btn" id="playBtn">Play</button>
+  <!-- Launcher principal -->
+  <div id="launcher" class="hidden">
+    <img src="https://i.imgur.com/wmTCE05.png" alt="Logo Ethernal" class="logo">
+    <h1>Ethernal Client 0.1</h1>
+    <p>Bienvenido al cliente oficial</p>
+    <button onclick="abrirMinecraft()">Jugar</button>
   </div>
 
-  <footer>© 2025 Ethernal Studio</footer>
-</div>
+  <script>
+    const msalConfig = {
+      auth: {
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+        authority: "https://login.microsoftonline.com/consumers/",
+        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+      }
+    };
 
-<script>
-  // Configura tu aplicación registrada en Azure
-  const msalConfig = {
-    auth: {
-      clientId: "TU_CLIENT_ID_DE_AZURE",
-      authority: "https://login.microsoftonline.com/consumers/",
-      redirectUri: window.location.origin
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+    const loginScreen = document.getElementById("login-screen");
+    const launcher = document.getElementById("launcher");
+
+    async function iniciarSesion() {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["XboxLive.signin", "User.Read"]
+        });
+        console.log("Sesión iniciada como:", loginResponse.account.username);
+        loginScreen.classList.add("hidden");
+        setTimeout(() => {
+          launcher.classList.remove("hidden");
+        }, 600);
+      } catch (error) {
+        alert("Error al iniciar sesión: " + error);
+      }
     }
-  };
 
-  const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-  async function handleLogin() {
-    try {
-      const response = await msalInstance.loginPopup({
-        scopes: ["XboxLive.signin", "openid", "profile", "email"]
-      });
-      console.log("Login exitoso:", response.account);
-      localStorage.setItem("microsoftSession", JSON.stringify(response.account));
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("launcher").style.display = "flex";
-    } catch (err) {
-      console.error(err);
-      alert("Error al iniciar sesión con Microsoft.");
+    function abrirMinecraft() {
+      const enlace = "minecraft://?addExternalServer=Ethernal|na81.aternos.me:60240";
+      window.location.href = enlace;
     }
-  }
 
-  // Mostrar launcher si ya hay sesión
-  const session = localStorage.getItem("microsoftSession");
-  if (session) {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("launcher").style.display = "flex";
-  }
-
-  document.getElementById("loginBtn").addEventListener("click", handleLogin);
-
-  // Botón Play → abre servidor de Minecraft
-  document.getElementById("playBtn").addEventListener("click", () => {
-    window.location.href = "minecraft://?addExternalServer=Ethernal|na81.aternos.me:60240";
-  });
-</script>
-
+    document.getElementById("login-btn").addEventListener("click", iniciarSesion);
+  </script>
 </body>
 </html>
