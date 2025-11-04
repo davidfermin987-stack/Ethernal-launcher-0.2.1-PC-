@@ -149,11 +149,10 @@
       transition: opacity 0.5s ease;
     }
 
-    /* Logo dinámico de evento (ajustado: más arriba y más grande) */
     .event-logo {
       position: relative;
-      top: -120px; /* más arriba */
-      width: 500px; /* mucho más grande */
+      top: -120px;
+      width: 500px;
       margin-bottom: 20px;
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -245,58 +244,4 @@
         document.getElementById("launcherPanel").style.display = "flex";
         document.getElementById("userName").textContent = account.username;
       } catch (err) {
-        console.error("Error al iniciar sesión:", err);
-        alert("Error al iniciar sesión: " + err.message);
-      }
-    });
-
-    let selectedServer = null;
-    function selectServer(serverName, fondo, logo) {
-      selectedServer = serverName;
-      const title = document.getElementById("serverTitle");
-      const eventLogo = document.getElementById("eventLogo");
-      const mainLogo = document.getElementById("mainLogo");
-
-      // Ocultar texto y logo principal
-      title.style.opacity = 0;
-      mainLogo.style.opacity = 0;
-      setTimeout(() => { title.textContent = ""; }, 300);
-
-      // Cambiar fondo
-      document.body.style.backgroundImage = `url('${fondo}')`;
-
-      // Cambiar logo del evento
-      eventLogo.src = logo;
-      eventLogo.style.opacity = 0;
-      setTimeout(() => {
-        eventLogo.style.opacity = 1;
-      }, 400);
-    }
-<script>
-  // URLs de Minecraft Bedrock para cada evento
-  const minecraftUrls = {
-    "Pesadilla Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
-    "Infección Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
-    "Build Ethernal Battle": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240"
-  };
-
-  function entrarServidor() {
-    if (!selectedServer) {
-      alert("Por favor, selecciona un evento primero.");
-      return;
-    }
-
-    // Obtenemos la URL correspondiente al evento seleccionado
-    const url = minecraftUrls[selectedServer];
-    if (!url) {
-      alert("No se encontró URL para este evento.");
-      return;
-    }
-
-    // Abrimos Minecraft Bedrock con la URL del evento
-    window.location.href = url;
-  }
-</script>
-
-</body>
-</html>
+        console.error("Error al iniciar
