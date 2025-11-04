@@ -272,16 +272,31 @@
         eventLogo.style.opacity = 1;
       }, 400);
     }
+<script>
+  // URLs de Minecraft Bedrock para cada evento
+  const minecraftUrls = {
+    "Pesadilla Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
+    "Infección Hardcore": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240",
+    "Build Ethernal Battle": "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240"
+  };
 
-    function entrarServidor() {
-      if (!selectedServer) {
-        alert("Por favor, selecciona un evento primero.");
-        return;
-      }
-      const servidor = "minecraft://?addExternalServer=" + selectedServer + "|na81.aternos.me:60240";
-      window.location.href = servidor;
+  function entrarServidor() {
+    if (!selectedServer) {
+      alert("Por favor, selecciona un evento primero.");
+      return;
     }
-  </script>
+
+    // Obtenemos la URL correspondiente al evento seleccionado
+    const url = minecraftUrls[selectedServer];
+    if (!url) {
+      alert("No se encontró URL para este evento.");
+      return;
+    }
+
+    // Abrimos Minecraft Bedrock con la URL del evento
+    window.location.href = url;
+  }
+</script>
 
 </body>
 </html>
