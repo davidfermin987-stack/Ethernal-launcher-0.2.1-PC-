@@ -2,224 +2,235 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ethernal Client 0.1</title>
   <link rel="icon" href="🔥" />
   <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: url('fondo-ethernal.jpg') no-repeat center center/cover;
+      margin: 0;
+      padding: 0;
+      background: url('fondo_default.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
       color: white;
       text-align: center;
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: background-image 0.8s ease-in-out;
       overflow: hidden;
-    }
-
-    .sidebar {
-      position: absolute;
-      left: 20px;
-      top: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .sidebar img {
-      width: 70px;
-      height: 70px;
-      cursor: pointer;
-      border-radius: 50%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, border 0.3s ease;
-      object-fit: cover;
-      border: 2px solid transparent;
-    }
-
-    .sidebar img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 15px white;
-    }
-
-    /* ✨ Selección de evento ✨ */
-    .sidebar img.seleccionado {
-      filter: brightness(0.8);
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
-    }
-
-    #logoEvento {
-      width: 360px;
-      margin-bottom: 60px;
-      filter: drop-shadow(0 0 8px rgba(255,255,255,0.7));
-      transition: opacity 0.8s ease-in-out, transform 0.3s ease;
-    }
-
-    h1 {
-      font-size: 2em;
-      color: #fff;
-      text-shadow: 0 0 10px #ffffff;
-    }
-
-    button {
-      position: fixed;
-      bottom: 100px;
-      padding: 18px 80px;
-      border: none;
-      border-radius: 15px;
-      background: rgba(0, 0, 50, 0.6);
-      color: white;
-      font-size: 1.3em;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-      backdrop-filter: blur(5px);
-    }
-
-    button:hover {
-      background: rgba(0, 0, 70, 0.9);
-      transform: scale(1.05);
+      transition: background 1s ease-in-out;
     }
 
     .fade {
       opacity: 0;
-      transition: opacity 0.8s ease;
+      transition: opacity 1s ease-in-out;
     }
 
     .fade.show {
       opacity: 1;
     }
+
+    #logo {
+      width: 300px;
+      margin-top: 40px;
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+      transition: opacity 1s ease-in-out;
+    }
+
+    #event-logo {
+      display: none;
+      width: 400px;
+      margin: 80px auto 20px;
+      transition: opacity 1s ease-in-out;
+    }
+
+    /* 🔹 Panel lateral izquierdo */
+    .event-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 120px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 30px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+    }
+
+    .event-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .event-icon {
+      width: 80px;
+      height: 80px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .event-icon:hover,
+    .event-icon.active {
+      background-color: rgba(0, 0, 0, 0.6);
+      border: 2px solid #00bfff;
+      transform: scale(1.1);
+    }
+
+    #playButton {
+      background-color: rgba(0, 0, 60, 0.7);
+      border: none;
+      padding: 15px 60px;
+      font-size: 22px;
+      color: white;
+      border-radius: 15px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    #playButton:hover {
+      background-color: rgba(0, 0, 90, 0.8);
+      transform: scale(1.05);
+    }
+
+    #userIcon {
+      position: fixed;
+      bottom: 20px;
+      left: 25px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #00bfff;
+    }
+
+    #userIcon:hover {
+      transform: scale(1.1);
+      border-color: white;
+    }
   </style>
 </head>
-<body class="fade show">
-  <div class="sidebar">
-    <img src="pesadilla.png" alt="Pesadilla Hardcore" id="btnPesadilla" onclick="cambiarEvento('pesadilla', this)">
-    <img src="build.png" alt="Build Ethernal Battle" id="btnBuild" onclick="cambiarEvento('build', this)">
-    <img src="infeccion.png" alt="Infección Hardcore" id="btnInfeccion" onclick="cambiarEvento('infeccion', this)">
-    <img src="usuario.png" alt="Usuario" id="usuarioIcono" onclick="iniciarSesion()">
+<body>
+  <img id="logo" src="logo_principal.png" alt="Ethernal Client" />
+  <img id="event-logo" src="" alt="Evento" />
+
+  <!-- 🔹 Panel lateral con los eventos -->
+  <div class="event-panel">
+    <div class="event-selector">
+      <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
+      <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
+      <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
+    </div>
   </div>
 
-  <img id="logoEvento" class="fade show" src="logo-ethernal.png" alt="Logo principal">
-  <h1 id="titulo">Ethernal Client 0.1</h1>
-  <button id="playButton" onclick="entrarServidor()">JUGAR</button>
+  <button id="playButton">JUGAR</button>
+  <img id="userIcon" src="usuario.png" alt="Usuario" />
 
   <script>
-    let eventoActual = null;
-    let sesionIniciada = false;
+    const events = {
+      pesadilla: {
+        fondo: 'fondo_pesadilla.jpg',
+        logo: 'logo_pesadilla.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      build: {
+        fondo: 'fondo_build.jpg',
+        logo: 'logo_build.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      infeccion: {
+        fondo: 'fondo_infeccion.jpg',
+        logo: 'logo_infeccion.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      }
+    };
 
+    let selectedEvent = null;
+
+    document.querySelectorAll('.event-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+        icon.classList.add('active');
+
+        const event = events[icon.id];
+        selectedEvent = event;
+
+        // Fondo con efecto fade
+        document.body.classList.add('fade');
+        setTimeout(() => {
+          document.body.style.backgroundImage = `url('${event.fondo}')`;
+          document.body.classList.remove('fade');
+        }, 500);
+
+        // Ocultar logo principal
+        document.getElementById('logo').style.display = 'none';
+
+        // Mostrar logo del evento
+        const eventLogo = document.getElementById('event-logo');
+        eventLogo.src = event.logo;
+        eventLogo.style.display = 'block';
+        eventLogo.classList.add('show');
+      });
+    });
+
+    document.getElementById('playButton').addEventListener('click', () => {
+      if (!selectedEvent) {
+        alert('Selecciona un evento primero.');
+        return;
+      }
+      window.location.href = selectedEvent.link;
+    });
+
+    // Iniciar sesión al hacer clic en el icono del usuario
     const msalConfig = {
       auth: {
-        clientId: "d74436bb-7b1f-4b71-ae9b-0ee145ad2b44",
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
         authority: "https://login.microsoftonline.com/consumers",
-        redirectUri: window.location.origin
+        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
       }
     };
 
     const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-    async function iniciarSesion() {
+    const loginButton = document.getElementById('userIcon');
+    loginButton.addEventListener('click', async () => {
       try {
         const loginResponse = await msalInstance.loginPopup({
-          scopes: ["user.read"]
+          scopes: ["User.Read"]
         });
 
-        if (loginResponse) {
-          sesionIniciada = true;
-          const account = loginResponse.account;
+        const account = loginResponse.account;
+        const tokenResponse = await msalInstance.acquireTokenSilent({
+          scopes: ["User.Read"],
+          account: account
+        });
 
-          const tokenResponse = await msalInstance.acquireTokenSilent({
-            scopes: ["user.read"],
-            account: account
-          });
+        // Cargar foto de perfil desde Microsoft Graph
+        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+        });
 
-          const profile = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-            headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
-          });
-
-          if (profile.ok) {
-            const blob = await profile.blob();
-            const imageUrl = URL.createObjectURL(blob);
-            document.getElementById("usuarioIcono").src = imageUrl;
-          } else {
-            document.getElementById("usuarioIcono").src = "usuario.png";
-          }
-
-          alert(`✅ Sesión iniciada: ${account.username}`);
-        }
-      } catch (err) {
-        console.error("Error en inicio de sesión:", err);
-        alert("❌ No se pudo iniciar sesión con Microsoft.");
-      }
-    }
-
-    function cambiarEvento(evento, elemento) {
-      eventoActual = evento;
-
-      document.querySelectorAll('.sidebar img').forEach(img => img.classList.remove('seleccionado'));
-      elemento.classList.add('seleccionado');
-
-      const fondo = document.body;
-      const logoEvento = document.getElementById('logoEvento');
-      const titulo = document.getElementById('titulo');
-
-      fondo.classList.remove('show');
-      logoEvento.classList.remove('show');
-      titulo.classList.remove('show');
-
-      setTimeout(() => {
-        if (evento === 'pesadilla') {
-          fondo.style.backgroundImage = "url('fondo-pesadilla.jpg')";
-          logoEvento.src = "pesadilla-logo.png";
-        } else if (evento === 'build') {
-          fondo.style.backgroundImage = "url('fondo-build.jpg')";
-          logoEvento.src = "build-logo.png";
-        } else if (evento === 'infeccion') {
-          fondo.style.backgroundImage = "url('fondo-infeccion.jpg')";
-          logoEvento.src = "infeccion-logo.png";
+        if (graphResponse.ok) {
+          const blob = await graphResponse.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          document.getElementById('userIcon').src = imageUrl;
+        } else {
+          document.getElementById('userIcon').src = "usuario.png";
         }
 
-        titulo.textContent = "";
-        setTimeout(() => {
-          fondo.classList.add('show');
-          logoEvento.classList.add('show');
-        }, 100);
-      }, 300);
-    }
-
-    function entrarServidor() {
-      if (!sesionIniciada) {
-        alert("⚠️ Debes iniciar sesión con tu cuenta Microsoft antes de jugar.");
-        return;
+      } catch (error) {
+        console.error(error);
+        alert("Error al iniciar sesión: " + error.message);
       }
-
-      if (!eventoActual) {
-        alert("⚠️ Primero selecciona un evento antes de jugar.");
-        return;
-      }
-
-      let enlace = "";
-
-      // ✅ Todos apuntan al mismo link, pero el código está preparado si después cambias alguno
-      if (eventoActual === "pesadilla") {
-        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
-      } else if (eventoActual === "build") {
-        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
-      } else if (eventoActual === "infeccion") {
-        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
-      }
-
-      window.location.href = enlace;
-    }
-
-    window.onload = () => {
-      document.body.classList.add('fade', 'show');
-      document.getElementById('logoEvento').classList.add('fade', 'show');
-    };
+    });
   </script>
 </body>
 </html>
