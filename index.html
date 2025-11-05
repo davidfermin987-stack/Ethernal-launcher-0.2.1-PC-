@@ -37,13 +37,21 @@
       height: 70px;
       cursor: pointer;
       border-radius: 50%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, border 0.3s ease;
       object-fit: cover;
+      border: 2px solid transparent;
     }
 
     .sidebar img:hover {
       transform: scale(1.1);
       box-shadow: 0 0 15px white;
+    }
+
+    /* ✨ Selección de evento ✨ */
+    .sidebar img.seleccionado {
+      filter: brightness(0.8);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
     }
 
     #logoEvento {
@@ -90,9 +98,9 @@
 </head>
 <body class="fade show">
   <div class="sidebar">
-    <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="cambiarEvento('pesadilla')">
-    <img src="build.png" alt="Build Ethernal Battle" onclick="cambiarEvento('build')">
-    <img src="infeccion.png" alt="Infección Hardcore" onclick="cambiarEvento('infeccion')">
+    <img src="pesadilla.png" alt="Pesadilla Hardcore" id="btnPesadilla" onclick="cambiarEvento('pesadilla', this)">
+    <img src="build.png" alt="Build Ethernal Battle" id="btnBuild" onclick="cambiarEvento('build', this)">
+    <img src="infeccion.png" alt="Infección Hardcore" id="btnInfeccion" onclick="cambiarEvento('infeccion', this)">
     <img src="usuario.png" alt="Usuario" id="usuarioIcono" onclick="iniciarSesion()">
   </div>
 
@@ -101,14 +109,12 @@
   <button id="playButton" onclick="entrarServidor()">JUGAR</button>
 
   <script>
-    let ip = "na81.aternos.me";
-    let puerto = "60240";
+    let eventoActual = null;
     let sesionIniciada = false;
 
-    // 🟦 Configuración de Microsoft Authentication (MSAL)
     const msalConfig = {
       auth: {
-        clientId: "d74436bb-7b1f-4b71-ae9b-0ee145ad2b44", // CLIENTE PÚBLICO (no cambiar)
+        clientId: "d74436bb-7b1f-4b71-ae9b-0ee145ad2b44",
         authority: "https://login.microsoftonline.com/consumers",
         redirectUri: window.location.origin
       }
@@ -125,9 +131,7 @@
         if (loginResponse) {
           sesionIniciada = true;
           const account = loginResponse.account;
-          console.log("Sesión iniciada como:", account.username);
 
-          // Obtener la foto de perfil de Microsoft
           const tokenResponse = await msalInstance.acquireTokenSilent({
             scopes: ["user.read"],
             account: account
@@ -153,7 +157,12 @@
       }
     }
 
-    function cambiarEvento(evento) {
+    function cambiarEvento(evento, elemento) {
+      eventoActual = evento;
+
+      document.querySelectorAll('.sidebar img').forEach(img => img.classList.remove('seleccionado'));
+      elemento.classList.add('seleccionado');
+
       const fondo = document.body;
       const logoEvento = document.getElementById('logoEvento');
       const titulo = document.getElementById('titulo');
@@ -166,18 +175,12 @@
         if (evento === 'pesadilla') {
           fondo.style.backgroundImage = "url('fondo-pesadilla.jpg')";
           logoEvento.src = "pesadilla-logo.png";
-          ip = "na81.aternos.me";
-          puerto = "60240";
         } else if (evento === 'build') {
           fondo.style.backgroundImage = "url('fondo-build.jpg')";
           logoEvento.src = "build-logo.png";
-          ip = "build.ethernal.me";
-          puerto = "12345";
         } else if (evento === 'infeccion') {
           fondo.style.backgroundImage = "url('fondo-infeccion.jpg')";
           logoEvento.src = "infeccion-logo.png";
-          ip = "infect.ethernal.me";
-          puerto = "55555";
         }
 
         titulo.textContent = "";
@@ -193,8 +196,24 @@
         alert("⚠️ Debes iniciar sesión con tu cuenta Microsoft antes de jugar.");
         return;
       }
-      const servidor = `minecraft://?addExternalServer=Ethernal Evento|${ip}:${puerto}`;
-      window.location.href = servidor;
+
+      if (!eventoActual) {
+        alert("⚠️ Primero selecciona un evento antes de jugar.");
+        return;
+      }
+
+      let enlace = "";
+
+      // ✅ Todos apuntan al mismo link, pero el código está preparado si después cambias alguno
+      if (eventoActual === "pesadilla") {
+        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
+      } else if (eventoActual === "build") {
+        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
+      } else if (eventoActual === "infeccion") {
+        enlace = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240";
+      }
+
+      window.location.href = enlace;
     }
 
     window.onload = () => {
