@@ -19,14 +19,8 @@
       transition: background 1s ease-in-out;
     }
 
-    .fade {
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade.show {
-      opacity: 1;
-    }
+    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
+    .fade.show { opacity: 1; }
 
     #logo {
       width: 300px;
@@ -42,7 +36,6 @@
       transition: opacity 1s ease-in-out;
     }
 
-    /* 🔹 Panel lateral izquierdo */
     .event-panel {
       position: fixed;
       top: 0;
@@ -116,13 +109,61 @@
       transform: scale(1.1);
       border-color: white;
     }
+
+    /* 🌌 Panel admin traslúcido flotante */
+    #adminPanel {
+      position: fixed;
+      top: 50%;
+      right: 30px;
+      transform: translateY(-50%);
+      height: auto;
+      width: 250px;
+      background: rgba(0, 0, 20, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      color: white;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #adminPanel h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(255,255,255,0.3);
+    }
+
+    .toggle {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .toggle button {
+      background: rgba(0, 0, 100, 0.6);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle button:hover {
+      background: rgba(0, 0, 150, 0.8);
+    }
   </style>
 </head>
 <body>
   <img id="logo" src="logo_principal.png" alt="Ethernal Client" />
   <img id="event-logo" src="" alt="Evento" />
 
-  <!-- 🔹 Panel lateral con los eventos -->
   <div class="event-panel">
     <div class="event-selector">
       <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
@@ -133,6 +174,23 @@
 
   <button id="playButton">JUGAR</button>
   <img id="userIcon" src="usuario.png" alt="Usuario" />
+
+  <!-- 🌌 Panel de administración -->
+  <div id="adminPanel">
+    <h3>Panel Admin</h3>
+    <div class="toggle">
+      <span>Pesadilla</span>
+      <button id="togglePesadilla">ON</button>
+    </div>
+    <div class="toggle">
+      <span>Build</span>
+      <button id="toggleBuild">ON</button>
+    </div>
+    <div class="toggle">
+      <span>Infección</span>
+      <button id="toggleInfeccion">ON</button>
+    </div>
+  </div>
 
   <script>
     const events = {
@@ -155,26 +213,42 @@
 
     let selectedEvent = null;
     let userLoggedIn = false;
+    let isAdmin = false;
+
+    const adminEmails = [
+      "davidfermin987@gmail.com",
+      "davidfermin876@gmail.com"
+    ];
+
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
+      pesadilla: true,
+      build: true,
+      infeccion: true
+    };
+
+    function updateAdminButtons() {
+      for (const e in eventStatus) {
+        const btn = document.getElementById("toggle" + capitalize(e));
+        if (!btn) continue;
+        btn.textContent = eventStatus[e] ? "ON" : "OFF";
+        btn.style.background = eventStatus[e]
+          ? "rgba(0,0,100,0.6)"
+          : "rgba(100,0,0,0.6)";
+      }
+    }
 
     document.querySelectorAll('.event-icon').forEach(icon => {
       icon.addEventListener('click', () => {
         document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
         icon.classList.add('active');
-
         const event = events[icon.id];
         selectedEvent = event;
-
-        // Fondo con efecto fade
         document.body.classList.add('fade');
         setTimeout(() => {
           document.body.style.backgroundImage = `url('${event.fondo}')`;
           document.body.classList.remove('fade');
         }, 500);
-
-        // Ocultar logo principal
         document.getElementById('logo').style.display = 'none';
-
-        // Mostrar logo del evento
         const eventLogo = document.getElementById('event-logo');
         eventLogo.src = event.logo;
         eventLogo.style.display = 'block';
@@ -191,10 +265,14 @@
         alert('Selecciona un evento primero.');
         return;
       }
+      const id = Object.keys(events).find(key => events[key] === selectedEvent);
+      if (!eventStatus[id]) {
+        alert('🚫 Este evento está temporalmente deshabilitado por un administrador.');
+        return;
+      }
       window.location.href = selectedEvent.link;
     });
 
-    // Iniciar sesión al hacer clic en el icono del usuario
     const msalConfig = {
       auth: {
         clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
@@ -211,33 +289,46 @@
         const loginResponse = await msalInstance.loginPopup({
           scopes: ["User.Read"]
         });
-
         const account = loginResponse.account;
         const tokenResponse = await msalInstance.acquireTokenSilent({
           scopes: ["User.Read"],
           account: account
         });
-
-        userLoggedIn = true; // ✅ Marca al usuario como logueado
-
-        // Cargar foto de perfil desde Microsoft Graph
+        userLoggedIn = true;
+        isAdmin = adminEmails.includes(account.username.toLowerCase());
+        if (isAdmin) {
+          document.getElementById('adminPanel').style.display = 'flex';
+          updateAdminButtons();
+        }
         const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
           headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
         });
-
         if (graphResponse.ok) {
           const blob = await graphResponse.blob();
           const imageUrl = URL.createObjectURL(blob);
           document.getElementById('userIcon').src = imageUrl;
-        } else {
-          document.getElementById('userIcon').src = "usuario.png";
         }
-
       } catch (error) {
         console.error(error);
         alert("Error al iniciar sesión: " + error.message);
       }
     });
+
+    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
+    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
+    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
+
+    function toggleEvent(eventName) {
+      eventStatus[eventName] = !eventStatus[eventName];
+      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
+      updateAdminButtons();
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    updateAdminButtons();
   </script>
 </body>
 </html>
