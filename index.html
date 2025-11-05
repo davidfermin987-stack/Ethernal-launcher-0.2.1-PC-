@@ -19,12 +19,19 @@
       transition: background 1s ease-in-out;
     }
 
-    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
-    .fade.show { opacity: 1; }
+    .fade {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
 
+    .fade.show {
+      opacity: 1;
+    }
+
+    /* 🔹 Logo más grande y centrado */
     #logo {
-      width: 300px;
-      margin-top: 40px;
+      width: 500px; /* antes 300px */
+      margin-top: 100px; /* lo baja un poco */
       filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
     }
@@ -75,15 +82,16 @@
       transform: scale(1.1);
     }
 
+    /* 🔹 Botón más ancho y más abajo */
     #playButton {
       background-color: rgba(0, 0, 60, 0.7);
       border: none;
-      padding: 15px 60px;
+      padding: 18px 100px; /* más ancho */
       font-size: 22px;
       color: white;
       border-radius: 15px;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: 40px; /* lo baja un poco más */
       transition: all 0.3s ease;
       position: relative;
     }
@@ -110,30 +118,25 @@
       border-color: white;
     }
 
-    /* 🌌 Panel admin traslúcido flotante */
     #adminPanel {
       position: fixed;
-      top: 50%;
-      right: 30px;
-      transform: translateY(-50%);
-      height: auto;
-      width: 250px;
-      background: rgba(0, 0, 20, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 220px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
       padding: 20px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4);
       display: none;
       flex-direction: column;
       color: white;
       text-align: left;
-      border: 1px solid rgba(255,255,255,0.1);
     }
 
     #adminPanel h3 {
       text-align: center;
       margin-bottom: 20px;
-      text-shadow: 0 0 5px rgba(255,255,255,0.3);
     }
 
     .toggle {
@@ -175,7 +178,6 @@
   <button id="playButton">JUGAR</button>
   <img id="userIcon" src="usuario.png" alt="Usuario" />
 
-  <!-- 🌌 Panel de administración -->
   <div id="adminPanel">
     <h3>Panel Admin</h3>
     <div class="toggle">
@@ -216,8 +218,9 @@
     let isAdmin = false;
 
     const adminEmails = [
-      "davidfermin987@gmail.com",
-      "davidfermin876@gmail.com"
+      "admin1@gmail.com",
+      "admin2@gmail.com",
+      "davidethernal@gmail.com"
     ];
 
     let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
