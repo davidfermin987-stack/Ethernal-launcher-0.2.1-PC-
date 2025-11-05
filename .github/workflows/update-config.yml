@@ -1,1 +1,28 @@
+name: Update Config
 
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: "Nuevo contenido del archivo config.json"
+        required: true
+
+jobs:
+  update-config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Actualizar archivo config.json
+        run: |
+          echo "${{ github.event.inputs.config }}" > config.json
+          cat config.json
+
+      - name: Commit & Push cambios
+        run: |
+          git config user.name "Ethernal Bot"
+          git config user.email "actions@github.com"
+          git add config.json
+          git commit -m "Actualizar configuración de eventos [Automático]" || echo "Sin cambios"
+          git push
