@@ -1,289 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ethernal Client 0.1</title>
-  <link rel="icon" href="🔥" />
-  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ethernal Client 0.2</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-
     body {
-      background: url('fondo.png') no-repeat center center/cover;
+      margin: 0;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
       overflow: hidden;
-      transition: background-image 1s ease;
+      background: url("fondo_default.jpg") center/cover no-repeat fixed;
+      font-family: "Poppins", sans-serif;
+      color: white;
     }
 
-    #loginPanel {
+    /* Barra lateral */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 80px;
+      background: rgba(10, 10, 20, 0.6);
+      backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      background: rgba(0, 0, 0, 0.5);
-      padding: 50px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0, 0, 100, 0.5);
-      animation: fadeIn 1.5s ease;
+      justify-content: space-between;
+      padding: 10px 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
     }
 
-    #loginPanel img {
-      width: 180px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
-      animation: pulseGlow 4s infinite;
+    .sidebar-icons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
     }
 
-    #loginPanel h1 {
-      color: #00bfff;
-      font-size: 2em;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
-    }
-
-    #loginBtn {
-      padding: 14px 30px;
-      background: rgba(0, 40, 90, 0.6);
-      color: #fff;
-      border: 1px solid rgba(0, 191, 255, 0.6);
+    .sidebar-icons img {
+      width: 55px;
+      height: 55px;
       border-radius: 12px;
-      font-size: 1em;
       cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    #loginBtn:hover {
-      background: rgba(0, 90, 160, 0.8);
-      transform: scale(1.05);
+    .sidebar-icons img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
     }
 
-    #launcherPanel {
-      display: none;
-      width: 100%;
+    /* Usuario abajo */
+    .sidebar-user {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 15px;
+    }
+
+    .sidebar-user img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #4fa3ff;
+    }
+
+    .sidebar-user span {
+      font-size: 13px;
+      color: #fff;
+    }
+
+    /* Contenido principal (para que no se oculte detrás de la barra) */
+    .main-content {
+      margin-left: 90px;
       height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      text-align: center;
-      backdrop-filter: blur(5px);
-      animation: fadeIn 1.5s ease;
-    }
-
-    #launcherPanel img.logo {
-      width: 300px;
-      margin-top: 30px;
-      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
-      animation: pulseGlow 5s infinite;
-      transition: opacity 0.8s ease;
-    }
-
-    /* ICONOS DE EVENTOS ARRIBA IZQUIERDA */
-    .sidebar {
-      position: absolute;
-      top: 40px;
-      left: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .server-icons img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: 0.3s ease;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-      animation: glowPulse 5s infinite;
-    }
-
-    .server-icons img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px white;
-    }
-
-    .user-section {
-      position: absolute;
-      bottom: 40px;
-      left: 40px;
-      text-align: center;
-      color: #00bfff;
-      font-size: 0.9em;
-    }
-
-    .user-section img {
-      width: 50px;
-      border-radius: 50%;
-      margin-bottom: 8px;
-    }
-
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      text-align: center;
-      position: relative;
-    }
-
-    .main h1 {
-      font-size: 3em;
-      color: #00bfff;
-      margin-top: 40px;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
-      transition: opacity 0.5s ease;
+      align-items: center;
+      transition: background 0.5s ease;
     }
 
     .event-logo {
-      position: relative;
-      top: -50px;
-      width: 320px;
+      width: 250px;
+      height: auto;
       margin-bottom: 20px;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      filter: drop-shadow(0 0 15px rgba(255,255,255,0.7));
+      display: none;
     }
 
-    .play-btn {
-      padding: 18px 40px;
-      background: rgba(0, 40, 90, 0.6);
-      border: 1px solid rgba(0, 191, 255, 0.6);
-      border-radius: 15px;
+    .play-button {
+      background: rgba(0, 40, 100, 0.7);
+      border: none;
+      border-radius: 10px;
+      padding: 15px 40px;
       color: white;
-      font-size: 1.3em;
+      font-size: 18px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.3s ease;
     }
 
-    .play-btn:hover {
-      background: rgba(0, 90, 160, 0.8);
-      transform: scale(1.05);
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { filter: drop-shadow(0 0 5px rgba(255,255,255,0.7)); }
-      50% { filter: drop-shadow(0 0 15px rgba(255,255,255,0.9)); }
-    }
-
-    @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-      50% { box-shadow: 0 0 25px rgba(255,255,255,0.9); }
+    .play-button:hover {
+      background: rgba(0, 70, 180, 0.8);
     }
   </style>
 </head>
 <body>
 
-  <div id="loginPanel">
-    <img src="logo.png" alt="Logo Ethernal" />
-    <h1>Ethernal Client 0.1</h1>
-    <button id="loginBtn">Iniciar sesión con Microsoft</button>
+  <!-- Barra lateral -->
+  <div class="sidebar">
+    <div class="sidebar-icons">
+      <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectEvent('pesadilla')" />
+      <img src="battle.png" alt="Build Ethernal Battle" onclick="selectEvent('battle')" />
+      <img src="infeccion.png" alt="Infección Hardcore" onclick="selectEvent('infeccion')" />
+    </div>
+
+    <div class="sidebar-user">
+      <img src="usuario.png" id="userAvatar" alt="Usuario" />
+      <span id="userName">Invitado</span>
+    </div>
   </div>
 
-  <div id="launcherPanel">
-    <img id="mainLogo" src="logo.png" class="logo" alt="Logo Ethernal" />
-    
-    <div class="sidebar">
-      <div class="server-icons">
-        <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectServer('Pesadilla Hardcore', 'fondo_pesadilla.png', 'logo_pesadilla.png', 'pesadilla.aternos.me', '25565')">
-        <img src="build.png" alt="Build Ethernal Battle" onclick="selectServer('Build Ethernal Battle', 'fondo_build.png', 'logo_build.png', 'build.ethernalmc.net', '19132')">
-        <img src="infeccion.png" alt="Infección Hardcore" onclick="selectServer('Infección Hardcore', 'fondo_infeccion.png', 'logo_infeccion.png', 'infeccion.ethernal.net', '25570')">
-      </div>
-    </div>
-
-    <div class="main">
-      <h1 id="serverTitle">Selecciona un evento</h1>
-      <img id="eventLogo" class="event-logo" src="" alt="">
-      <button class="play-btn" onclick="entrarServidor()">JUGAR</button>
-    </div>
-
-    <div class="user-section">
-      <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" alt="User">
-      <p id="userName">No conectado</p>
-    </div>
+  <!-- Contenido principal -->
+  <div class="main-content" id="main">
+    <img src="logo_ethernal.png" id="mainLogo" alt="Logo Principal" />
+    <h1 id="mainText">Ethernal Client</h1>
+    <button class="play-button" id="playButton">JUGAR</button>
   </div>
 
   <script>
-    const msalConfig = {
-      auth: {
-        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
-        authority: "https://login.microsoftonline.com/common",
-        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+    const main = document.getElementById("main");
+    const mainLogo = document.getElementById("mainLogo");
+    const mainText = document.getElementById("mainText");
+
+    const eventData = {
+      pesadilla: {
+        bg: "fondo_pesadilla.jpg",
+        logo: "logo_pesadilla.png",
+        ip: "play.pesadilla.net",
+        port: "19132"
+      },
+      battle: {
+        bg: "fondo_battle.jpg",
+        logo: "logo_battle.png",
+        ip: "battle.ethernal.net",
+        port: "19133"
+      },
+      infeccion: {
+        bg: "fondo_infeccion.jpg",
+        logo: "logo_infeccion.png",
+        ip: "infect.ethernal.net",
+        port: "19134"
       }
     };
 
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
+    function selectEvent(eventName) {
+      const data = eventData[eventName];
+      if (!data) return;
+      document.body.style.backgroundImage = `url('${data.bg}')`;
+      mainText.style.display = "none";
+      mainLogo.style.display = "none";
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      try {
-        const loginResponse = await msalInstance.loginPopup({
-          scopes: ["User.Read"]
-        });
-
-        const account = loginResponse.account;
-        document.getElementById("loginPanel").style.display = "none";
-        document.getElementById("launcherPanel").style.display = "flex";
-        document.getElementById("userName").textContent = account.username;
-      } catch (err) {
-        console.error("Error al iniciar sesión:", err);
-        alert("Error al iniciar sesión: " + err.message);
+      // Logo del evento
+      let eventLogo = document.getElementById("eventLogo");
+      if (!eventLogo) {
+        eventLogo = document.createElement("img");
+        eventLogo.id = "eventLogo";
+        eventLogo.classList.add("event-logo");
+        main.prepend(eventLogo);
       }
-    });
+      eventLogo.src = data.logo;
+      eventLogo.style.display = "block";
 
-    let selectedServer = null;
-    let selectedIP = null;
-    let selectedPort = null;
-
-    function selectServer(serverName, fondo, logo, ip, port) {
-      selectedServer = serverName;
-      selectedIP = ip;
-      selectedPort = port;
-
-      const title = document.getElementById("serverTitle");
-      const eventLogo = document.getElementById("eventLogo");
-      const mainLogo = document.getElementById("mainLogo");
-
-      title.style.opacity = 0;
-      mainLogo.style.opacity = 0;
-      setTimeout(() => { title.textContent = ""; }, 300);
-
-      document.body.style.backgroundImage = `url('${fondo}')`;
-
-      eventLogo.src = logo;
-      eventLogo.style.opacity = 0;
-      setTimeout(() => {
-        eventLogo.style.opacity = 1;
-      }, 400);
-    }
-
-    function entrarServidor() {
-      if (!selectedServer || !selectedIP || !selectedPort) {
-        alert("Por favor, selecciona un evento primero.");
-        return;
-      }
-      const servidor = `minecraft://?addExternalServer=${selectedServer}|${selectedIP}:${selectedPort}`;
-      window.location.href = servidor;
+      // Cambiar acción del botón
+      const playButton = document.getElementById("playButton");
+      playButton.onclick = () => {
+        alert(`Conectando a ${data.ip}:${data.port}`);
+      };
     }
   </script>
-
 </body>
 </html>
