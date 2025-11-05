@@ -1,184 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ethernal Client 0.2</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethernal Client 0.1</title>
+  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <style>
     body {
       margin: 0;
-      height: 100vh;
       overflow: hidden;
-      background: url("fondo_default.jpg") center/cover no-repeat fixed;
-      font-family: "Poppins", sans-serif;
-      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('fondo-ethernal.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
 
-    /* Barra lateral */
     .sidebar {
       position: fixed;
-      left: 0;
       top: 0;
-      height: 100%;
-      width: 80px;
-      background: rgba(10, 10, 20, 0.6);
-      backdrop-filter: blur(8px);
+      left: 0;
+      width: 110px;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      padding: 10px 0;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+      padding-top: 20px;
     }
 
-    .sidebar-icons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .sidebar-icons img {
-      width: 55px;
-      height: 55px;
-      border-radius: 12px;
-      cursor: pointer;
+    .event-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 15px;
+      margin: 10px 0;
       transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
     }
 
-    .sidebar-icons img:hover {
+    .event-icon:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 15px white;
     }
 
-    /* Usuario abajo */
-    .sidebar-user {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: 15px;
-    }
-
-    .sidebar-user img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 2px solid #4fa3ff;
-    }
-
-    .sidebar-user span {
-      font-size: 13px;
-      color: #fff;
-    }
-
-    /* Contenido principal (para que no se oculte detrás de la barra) */
-    .main-content {
-      margin-left: 90px;
-      height: 100%;
+    .main {
+      margin-left: 140px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: background 0.5s ease;
+      height: 100vh;
+      text-align: center;
+      transition: background 1s ease;
     }
 
-    .event-logo {
+    #logo {
       width: 250px;
-      height: auto;
-      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+      transition: opacity 0.5s;
+    }
+
+    #eventLogo {
       display: none;
+      width: 320px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 15px rgba(255,255,255,0.5));
     }
 
-    .play-button {
-      background: rgba(0, 40, 100, 0.7);
-      border: none;
-      border-radius: 10px;
-      padding: 15px 40px;
+    #titulo {
+      font-size: 2em;
       color: white;
-      font-size: 18px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      margin-top: 20px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      transition: opacity 0.5s;
     }
 
-    .play-button:hover {
-      background: rgba(0, 70, 180, 0.8);
+    #playButton {
+      background: rgba(0, 0, 50, 0.6);
+      color: white;
+      border: none;
+      padding: 15px 50px;
+      font-size: 1.2em;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      margin-top: 30px;
+    }
+
+    #playButton:hover:enabled {
+      background: rgba(0, 50, 100, 0.8);
+      transform: scale(1.05);
+    }
+
+    #playButton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .usuario {
+      margin-top: auto;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    #userIcon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid #00b7ff;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      object-fit: cover;
+    }
+
+    #userIcon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #00b7ff;
+    }
+
+    #userName {
+      color: white;
+      font-size: 0.9em;
+      display: block;
+      margin-top: 8px;
+    }
+
+    #userStatus {
+      color: gray;
+      font-size: 0.8em;
     }
   </style>
 </head>
 <body>
 
-  <!-- Barra lateral -->
   <div class="sidebar">
-    <div class="sidebar-icons">
-      <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectEvent('pesadilla')" />
-      <img src="battle.png" alt="Build Ethernal Battle" onclick="selectEvent('battle')" />
-      <img src="infeccion.png" alt="Infección Hardcore" onclick="selectEvent('infeccion')" />
-    </div>
+    <img src="pesadilla.png" class="event-icon" onclick="seleccionarEvento('pesadilla')" title="Pesadilla Hardcore">
+    <img src="build.png" class="event-icon" onclick="seleccionarEvento('build')" title="Build Ethernal Battle">
+    <img src="infeccion.png" class="event-icon" onclick="seleccionarEvento('infeccion')" title="Infección Hardcore">
 
-    <div class="sidebar-user">
-      <img src="usuario.png" id="userAvatar" alt="Usuario" />
-      <span id="userName">Invitado</span>
+    <div class="usuario">
+      <img id="userIcon" src="usuario.png" alt="Usuario">
+      <span id="userName">Usuario</span>
+      <div id="userStatus">Invitado</div>
     </div>
   </div>
 
-  <!-- Contenido principal -->
-  <div class="main-content" id="main">
-    <img src="logo_ethernal.png" id="mainLogo" alt="Logo Principal" />
-    <h1 id="mainText">Ethernal Client</h1>
-    <button class="play-button" id="playButton">JUGAR</button>
+  <div class="main" id="main">
+    <img id="logo" src="logo-ethernal.png" alt="Logo">
+    <img id="eventLogo" src="" alt="Logo Evento">
+    <h1 id="titulo">Ethernal Client 0.1</h1>
+    <button id="playButton">JUGAR</button>
   </div>
 
+  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <script>
-    const main = document.getElementById("main");
-    const mainLogo = document.getElementById("mainLogo");
-    const mainText = document.getElementById("mainText");
+    let eventoActual = null;
+    let cuentaActual = null;
+    const playButton = document.getElementById('playButton');
+    const titulo = document.getElementById('titulo');
+    const logo = document.getElementById('logo');
+    const eventLogo = document.getElementById('eventLogo');
 
-    const eventData = {
-      pesadilla: {
-        bg: "fondo_pesadilla.jpg",
-        logo: "logo_pesadilla.png",
-        ip: "play.pesadilla.net",
-        port: "19132"
-      },
-      battle: {
-        bg: "fondo_battle.jpg",
-        logo: "logo_battle.png",
-        ip: "battle.ethernal.net",
-        port: "19133"
-      },
-      infeccion: {
-        bg: "fondo_infeccion.jpg",
-        logo: "logo_infeccion.png",
-        ip: "infect.ethernal.net",
-        port: "19134"
-      }
+    // Configuración de eventos
+    const eventos = {
+      pesadilla: { ip: "play.pesadillahardcore.net", puerto: "19132", fondo: "fondo-pesadilla.jpg", logo: "pesadilla-logo.png" },
+      build: { ip: "play.buildethernalbattle.net", puerto: "19132", fondo: "fondo-build.jpg", logo: "build-logo.png" },
+      infeccion: { ip: "play.infeccionhardcore.net", puerto: "19132", fondo: "fondo-infeccion.jpg", logo: "infeccion-logo.png" }
     };
 
-    function selectEvent(eventName) {
-      const data = eventData[eventName];
-      if (!data) return;
-      document.body.style.backgroundImage = `url('${data.bg}')`;
-      mainText.style.display = "none";
-      mainLogo.style.display = "none";
+    function seleccionarEvento(nombre) {
+      eventoActual = eventos[nombre];
+      document.body.style.background = `url('${eventoActual.fondo}') no-repeat center center fixed`;
+      document.body.style.backgroundSize = 'cover';
 
-      // Logo del evento
-      let eventLogo = document.getElementById("eventLogo");
-      if (!eventLogo) {
-        eventLogo = document.createElement("img");
-        eventLogo.id = "eventLogo";
-        eventLogo.classList.add("event-logo");
-        main.prepend(eventLogo);
-      }
-      eventLogo.src = data.logo;
-      eventLogo.style.display = "block";
-
-      // Cambiar acción del botón
-      const playButton = document.getElementById("playButton");
-      playButton.onclick = () => {
-        alert(`Conectando a ${data.ip}:${data.port}`);
-      };
+      titulo.style.opacity = 0;
+      logo.style.opacity = 0;
+      eventLogo.src = eventoActual.logo;
+      eventLogo.style.display = 'block';
     }
+
+    // ------------------------
+    // 🔹 Microsoft Login (MSAL)
+    // ------------------------
+    const msalConfig = {
+      auth: {
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+        authority: "https://login.microsoftonline.com/consumers/",
+        redirectUri: window.location.origin
+      }
+    };
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    async function verificarSesion() {
+      const cuentas = msalInstance.getAllAccounts();
+      if (cuentas.length > 0) {
+        cuentaActual = cuentas[0];
+        mostrarUsuario(cuentaActual);
+        habilitarJugar();
+      }
+    }
+
+    async function iniciarSesionMicrosoft() {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["User.Read"]
+        });
+        cuentaActual = loginResponse.account;
+        mostrarUsuario(cuentaActual);
+        habilitarJugar();
+      } catch (error) {
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    }
+
+    async function mostrarUsuario(cuenta) {
+      document.getElementById("userName").textContent = cuenta.username.split("@")[0];
+      document.getElementById("userStatus").textContent = "Conectado";
+
+      try {
+        const tokenResponse = await msalInstance.acquireTokenSilent({
+          account: cuenta,
+          scopes: ["User.Read"]
+        });
+
+        const photoResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+        });
+
+        if (photoResponse.ok) {
+          const blob = await photoResponse.blob();
+          const url = URL.createObjectURL(blob);
+          document.getElementById("userIcon").src = url;
+        }
+      } catch (err) {
+        console.warn("No se pudo obtener la foto de perfil:", err);
+      }
+    }
+
+    function habilitarJugar() {
+      playButton.disabled = false;
+      playButton.style.opacity = '1';
+    }
+
+    document.getElementById('userIcon').addEventListener('click', iniciarSesionMicrosoft);
+
+    playButton.addEventListener('click', (e) => {
+      if (!cuentaActual) {
+        e.preventDefault();
+        alert("⚠️ Debes iniciar sesión con Microsoft antes de jugar.");
+      } else if (eventoActual) {
+        const url = `minecraft://?addExternalServer=${eventoActual.ip}|${eventoActual.puerto}`;
+        window.location.href = url;
+      } else {
+        alert("Selecciona un evento antes de jugar.");
+      }
+    });
+
+    playButton.disabled = true;
+    playButton.style.opacity = '0.5';
+
+    verificarSesion();
   </script>
 </body>
 </html>
