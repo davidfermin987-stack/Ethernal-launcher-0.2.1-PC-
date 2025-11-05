@@ -154,6 +154,7 @@
     };
 
     let selectedEvent = null;
+    let userLoggedIn = false;
 
     document.querySelectorAll('.event-icon').forEach(icon => {
       icon.addEventListener('click', () => {
@@ -182,6 +183,10 @@
     });
 
     document.getElementById('playButton').addEventListener('click', () => {
+      if (!userLoggedIn) {
+        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+        return;
+      }
       if (!selectedEvent) {
         alert('Selecciona un evento primero.');
         return;
@@ -212,6 +217,8 @@
           scopes: ["User.Read"],
           account: account
         });
+
+        userLoggedIn = true; // ✅ Marca al usuario como logueado
 
         // Cargar foto de perfil desde Microsoft Graph
         const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
