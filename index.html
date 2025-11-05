@@ -89,15 +89,15 @@
       transition: opacity 0.8s ease;
     }
 
+    /* ICONOS DE EVENTOS ARRIBA IZQUIERDA */
     .sidebar {
       position: absolute;
+      top: 40px;
       left: 40px;
-      top: 50%;
-      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 25px;
+      gap: 20px;
     }
 
     .server-icons img {
@@ -149,11 +149,10 @@
       transition: opacity 0.5s ease;
     }
 
-    /* Logo dinámico de evento */
     .event-logo {
       position: relative;
-      top: -70px; /* más arriba */
-      width: 420px; /* más grande */
+      top: -50px;
+      width: 320px;
       margin-bottom: 20px;
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -205,9 +204,9 @@
     
     <div class="sidebar">
       <div class="server-icons">
-        <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectServer('Pesadilla Hardcore', 'fondo_pesadilla.png', 'logo_pesadilla.png')">
-        <img src="build.png" alt="Build Ethernal Battle" onclick="selectServer('Build Ethernal Battle', 'fondo_build.png', 'logo_build.png')">
-        <img src="infeccion.png" alt="Infección Hardcore" onclick="selectServer('Infección Hardcore', 'fondo_infeccion.png', 'logo_infeccion.png')">
+        <img src="pesadilla.png" alt="Pesadilla Hardcore" onclick="selectServer('Pesadilla Hardcore', 'fondo_pesadilla.png', 'logo_pesadilla.png', 'pesadilla.aternos.me', '25565')">
+        <img src="build.png" alt="Build Ethernal Battle" onclick="selectServer('Build Ethernal Battle', 'fondo_build.png', 'logo_build.png', 'build.ethernalmc.net', '19132')">
+        <img src="infeccion.png" alt="Infección Hardcore" onclick="selectServer('Infección Hardcore', 'fondo_infeccion.png', 'logo_infeccion.png', 'infeccion.ethernal.net', '25570')">
       </div>
     </div>
 
@@ -251,21 +250,24 @@
     });
 
     let selectedServer = null;
-    function selectServer(serverName, fondo, logo) {
+    let selectedIP = null;
+    let selectedPort = null;
+
+    function selectServer(serverName, fondo, logo, ip, port) {
       selectedServer = serverName;
+      selectedIP = ip;
+      selectedPort = port;
+
       const title = document.getElementById("serverTitle");
       const eventLogo = document.getElementById("eventLogo");
       const mainLogo = document.getElementById("mainLogo");
 
-      // Ocultar texto y logo principal
       title.style.opacity = 0;
       mainLogo.style.opacity = 0;
       setTimeout(() => { title.textContent = ""; }, 300);
 
-      // Cambiar fondo
       document.body.style.backgroundImage = `url('${fondo}')`;
 
-      // Cambiar logo del evento
       eventLogo.src = logo;
       eventLogo.style.opacity = 0;
       setTimeout(() => {
@@ -274,11 +276,11 @@
     }
 
     function entrarServidor() {
-      if (!selectedServer) {
+      if (!selectedServer || !selectedIP || !selectedPort) {
         alert("Por favor, selecciona un evento primero.");
         return;
       }
-      const servidor = "minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240" + selectedServer + "|na81.aternos.me:60240";
+      const servidor = `minecraft://?addExternalServer=${selectedServer}|${selectedIP}:${selectedPort}`;
       window.location.href = servidor;
     }
   </script>
