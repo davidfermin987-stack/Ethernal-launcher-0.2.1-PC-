@@ -28,9 +28,10 @@
       opacity: 1;
     }
 
+    /* 🔹 Logo más grande y centrado */
     #logo {
-      width: 420px;
-      margin-top: 80px;
+      width: 500px;
+      margin-top: 100px;
       filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
     }
@@ -72,7 +73,6 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid transparent;
-      object-fit: cover;
     }
 
     .event-icon:hover,
@@ -82,37 +82,21 @@
       transform: scale(1.1);
     }
 
-    #addInstanceButton {
-      margin-top: 25px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-size: 36px;
-      border: 2px solid #00bfff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    #addInstanceButton:hover {
-      background: rgba(0, 0, 60, 0.7);
-      transform: scale(1.1);
-    }
-
+    /* 🔹 Botón más ancho, más abajo y estático */
     #playButton {
       background-color: rgba(0, 0, 60, 0.7);
       border: none;
-      padding: 15px 100px;
+      padding: 18px 100px;
       font-size: 22px;
       color: white;
       border-radius: 15px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      position: fixed;
-      bottom: 60px;
+      position: fixed; /* ahora es fijo */
+      bottom: 80px; /* más abajo */
       left: 50%;
       transform: translateX(-50%);
+      transition: all 0.3s ease;
+      z-index: 10;
     }
 
     #playButton:hover {
@@ -180,127 +164,6 @@
     .toggle button:hover {
       background: rgba(0, 0, 150, 0.8);
     }
-
-    /* 🔹 Panel grande de Instancias */
-    #instanceModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    #instanceContent {
-      background: rgba(20, 20, 30, 0.8);
-      width: 70%;
-      height: 70%;
-      border-radius: 20px;
-      padding: 20px;
-      overflow-y: auto;
-      text-align: left;
-      position: relative;
-      color: white;
-    }
-
-    #closeInstancePanel {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #ff4d4d;
-    }
-
-    .instance-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 60px;
-    }
-
-    .instance-card {
-      width: 160px;
-      height: 160px;
-      border-radius: 15px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-      border: 2px solid #00bfff;
-      transition: transform 0.3s ease;
-    }
-
-    .instance-card:hover {
-      transform: scale(1.05);
-    }
-
-    .instance-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .instance-name {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0,0,0,0.6);
-      text-align: center;
-      font-size: 16px;
-      padding: 4px 0;
-    }
-
-    /* 🔹 Modal de agregar instancia */
-    #addInstanceModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(10px);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    #addInstanceForm {
-      background: rgba(20,20,30,0.9);
-      padding: 25px;
-      border-radius: 20px;
-      width: 500px;
-      color: white;
-    }
-
-    #addInstanceForm input {
-      width: 100%;
-      padding: 8px;
-      margin: 6px 0 12px;
-      border: none;
-      border-radius: 8px;
-    }
-
-    #addInstanceForm button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-    }
-
-    #saveInstance {
-      background: #28a745;
-      color: white;
-    }
-
-    #cancelInstance {
-      background: #555;
-      color: white;
-      margin-left: 10px;
-    }
   </style>
 </head>
 <body>
@@ -308,12 +171,11 @@
   <img id="event-logo" src="" alt="Evento" />
 
   <div class="event-panel">
-    <div class="event-selector" id="eventSelector">
+    <div class="event-selector">
       <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
       <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
       <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
     </div>
-    <button id="addInstanceButton">+</button>
   </div>
 
   <button id="playButton">JUGAR</button>
@@ -321,114 +183,158 @@
 
   <div id="adminPanel">
     <h3>Panel Admin</h3>
-    <div class="toggle"><span>Pesadilla</span><button id="togglePesadilla">ON</button></div>
-    <div class="toggle"><span>Build</span><button id="toggleBuild">ON</button></div>
-    <div class="toggle"><span>Infección</span><button id="toggleInfeccion">ON</button></div>
-    <button id="openAddInstance" style="margin-top:15px;">Agregar Instancia</button>
-  </div>
-
-  <div id="instanceModal">
-    <div id="instanceContent">
-      <span id="closeInstancePanel">✖</span>
-      <h2>Instancias</h2>
-      <div class="instance-grid" id="instanceGrid">
-        <p id="noInstancesMsg">No hay instancias disponibles</p>
-      </div>
+    <div class="toggle">
+      <span>Pesadilla</span>
+      <button id="togglePesadilla">ON</button>
     </div>
-  </div>
-
-  <div id="addInstanceModal">
-    <div id="addInstanceForm">
-      <h2>Agregar Instancia</h2>
-      <label>Imagen del Icono:</label><input type="file" id="instanceIconInput" accept="image/*" /><br/>
-      <label>Fondo del Evento:</label><input type="file" id="instanceBackgroundInput" accept="image/*" /><br/>
-      <label>Logo del Evento:</label><input type="file" id="instanceLogoInput" accept="image/*" /><br/>
-      <label>Nombre del Evento:</label><input type="text" id="instanceNameInput" /><br/>
-      <label>URL del Servidor:</label><input type="text" id="instanceUrlInput" /><br/>
-      <label>Imagen para Instancia:</label><input type="file" id="instanceImageInput" accept="image/*" /><br/>
-      <button id="saveInstance">Guardar</button>
-      <button id="cancelInstance">Cancelar</button>
+    <div class="toggle">
+      <span>Build</span>
+      <button id="toggleBuild">ON</button>
+    </div>
+    <div class="toggle">
+      <span>Infección</span>
+      <button id="toggleInfeccion">ON</button>
     </div>
   </div>
 
   <script>
-    /* --- Tu código JS original completo se mantiene aquí sin cambios --- */
-    /* --- Solo se agrega el bloque de instancias al final --- */
-
-    const instanceBtn = document.getElementById("addInstanceButton");
-    const instanceModal = document.getElementById("instanceModal");
-    const closeInstance = document.getElementById("closeInstancePanel");
-    const instanceGrid = document.getElementById("instanceGrid");
-    const addInstanceModal = document.getElementById("addInstanceModal");
-    const openAddInstanceBtn = document.getElementById("openAddInstance");
-    const cancelInstance = document.getElementById("cancelInstance");
-    const saveInstance = document.getElementById("saveInstance");
-
-    let instances = JSON.parse(localStorage.getItem("customInstances")) || [];
-
-    function renderInstances() {
-      instanceGrid.innerHTML = "";
-      if (instances.length === 0) {
-        instanceGrid.innerHTML = "<p id='noInstancesMsg'>No hay instancias disponibles</p>";
-        return;
+    const events = {
+      pesadilla: {
+        fondo: 'fondo_pesadill.jpg',
+        logo: 'logo_pesadi.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      build: {
+        fondo: 'fondo_bui.jpg',
+        logo: 'logo_bui.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      infeccion: {
+        fondo: 'fondo_infecci.jpg',
+        logo: 'logo_infecci.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
       }
-      instances.forEach((inst, i) => {
-        const card = document.createElement("div");
-        card.className = "instance-card";
-        card.innerHTML = `<img src="${inst.instanceImage}" alt="${inst.name}" />
-                          <div class="instance-name">${inst.name}</div>`;
-        card.onclick = () => selectCustomInstance(inst);
-        instanceGrid.appendChild(card);
-      });
-    }
-
-    function selectCustomInstance(inst) {
-      selectedEvent = {
-        fondo: inst.background,
-        logo: inst.logo,
-        link: inst.url
-      };
-      document.body.style.backgroundImage = `url('${inst.background}')`;
-      document.getElementById("event-logo").src = inst.logo;
-      document.getElementById("event-logo").style.display = "block";
-      instanceModal.style.display = "none";
-    }
-
-    instanceBtn.onclick = () => { instanceModal.style.display = "flex"; renderInstances(); };
-    closeInstance.onclick = () => { instanceModal.style.display = "none"; };
-
-    if (openAddInstanceBtn)
-      openAddInstanceBtn.onclick = () => { addInstanceModal.style.display = "flex"; };
-
-    cancelInstance.onclick = () => { addInstanceModal.style.display = "none"; };
-
-    saveInstance.onclick = async () => {
-      const readFile = async (input) => {
-        if (!input.files[0]) return null;
-        return new Promise(res => {
-          const reader = new FileReader();
-          reader.onload = e => res(e.target.result);
-          reader.readAsDataURL(input.files[0]);
-        });
-      };
-
-      const icon = await readFile(document.getElementById("instanceIconInput"));
-      const bg = await readFile(document.getElementById("instanceBackgroundInput"));
-      const logo = await readFile(document.getElementById("instanceLogoInput"));
-      const name = document.getElementById("instanceNameInput").value.trim();
-      const url = document.getElementById("instanceUrlInput").value.trim();
-      const img = await readFile(document.getElementById("instanceImageInput"));
-
-      if (!name || !url || !icon || !bg || !logo || !img) {
-        alert("Por favor completa todos los campos.");
-        return;
-      }
-
-      instances.push({ icon, background: bg, logo, name, url, instanceImage: img });
-      localStorage.setItem("customInstances", JSON.stringify(instances));
-      addInstanceModal.style.display = "none";
-      renderInstances();
     };
+
+    let selectedEvent = null;
+    let userLoggedIn = false;
+    let isAdmin = false;
+
+    const adminEmails = [
+      "admin1@gmail.com",
+      "davidfermin876@gmail.com",
+      "davidfermin987@gmail.com"
+    ];
+
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
+      pesadilla: true,
+      build: true,
+      infeccion: true
+    };
+
+    function updateAdminButtons() {
+      for (const e in eventStatus) {
+        const btn = document.getElementById("toggle" + capitalize(e));
+        if (!btn) continue;
+        btn.textContent = eventStatus[e] ? "ON" : "OFF";
+        btn.style.background = eventStatus[e]
+          ? "rgba(0,0,100,0.6)"
+          : "rgba(100,0,0,0.6)";
+      }
+    }
+
+    document.querySelectorAll('.event-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+        icon.classList.add('active');
+        const event = events[icon.id];
+        selectedEvent = event;
+        document.body.classList.add('fade');
+        setTimeout(() => {
+          document.body.style.backgroundImage = `url('${event.fondo}')`;
+          document.body.classList.remove('fade');
+        }, 500);
+        document.getElementById('logo').style.display = 'none';
+        const eventLogo = document.getElementById('event-logo');
+        eventLogo.src = event.logo;
+        eventLogo.style.display = 'block';
+        eventLogo.classList.add('show');
+      });
+    });
+
+    document.getElementById('playButton').addEventListener('click', () => {
+      if (!userLoggedIn) {
+        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+        return;
+      }
+      if (!selectedEvent) {
+        alert('Selecciona un evento primero.');
+        return;
+      }
+      const id = Object.keys(events).find(key => events[key] === selectedEvent);
+      if (!eventStatus[id]) {
+        alert('🚫 Este evento está temporalmente deshabilitado por un administrador.');
+        return;
+      }
+      window.location.href = selectedEvent.link;
+    });
+
+    const msalConfig = {
+      auth: {
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+        authority: "https://login.microsoftonline.com/consumers",
+        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+      }
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    const loginButton = document.getElementById('userIcon');
+    loginButton.addEventListener('click', async () => {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["User.Read"]
+        });
+        const account = loginResponse.account;
+        const tokenResponse = await msalInstance.acquireTokenSilent({
+          scopes: ["User.Read"],
+          account: account
+        });
+        userLoggedIn = true;
+        isAdmin = adminEmails.includes(account.username.toLowerCase());
+        if (isAdmin) {
+          document.getElementById('adminPanel').style.display = 'flex';
+          updateAdminButtons();
+        }
+        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+        });
+        if (graphResponse.ok) {
+          const blob = await graphResponse.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          document.getElementById('userIcon').src = imageUrl;
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    });
+
+    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
+    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
+    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
+
+    function toggleEvent(eventName) {
+      eventStatus[eventName] = !eventStatus[eventName];
+      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
+      updateAdminButtons();
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    updateAdminButtons();
   </script>
 </body>
 </html>
