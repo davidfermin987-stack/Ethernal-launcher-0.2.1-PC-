@@ -119,6 +119,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid #00bfff;
+      object-fit: cover;
     }
 
     #userIcon:hover {
@@ -128,23 +129,27 @@
 
     #adminPanel {
       position: fixed;
-      top: 0;
-      right: 0;
-      height: 100vh;
-      width: 220px;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(6px);
+      top: 50%;
+      right: 30px;
+      transform: translateY(-50%);
+      height: auto;
+      width: 250px;
+      background: rgba(0, 0, 20, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
       padding: 20px;
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
       display: none;
       flex-direction: column;
       color: white;
       text-align: left;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     #adminPanel h3 {
       text-align: center;
       margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(255,255,255,0.3);
     }
 
     .toggle {
@@ -202,8 +207,6 @@
       <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
       <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
       <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
-
-      <!-- 🔹 Nuevo icono de añadir evento -->
       <div id="addEvent" class="event-icon">+</div>
     </div>
   </div>
@@ -225,31 +228,244 @@
       <span>Infección</span>
       <button id="toggleInfeccion">ON</button>
     </div>
+    <p id="adminStatus" style="text-align:center; font-size:12px; margin-top:10px; opacity:0.8;">Cambios guardados automáticamente</p>
   </div>
 
   <script>
-    // Botón de idioma existente
+    // --- Config y datos ---
+    const events = {
+      pesadilla: {
+        fondo: 'fondo_pesadilla.jpg',
+        logo: 'logo_pesadilla.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      build: {
+        fondo: 'fondo_build.jpg',
+        logo: 'logo_build.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      infeccion: {
+        fondo: 'fondo_infeccion.jpg',
+        logo: 'logo_infeccion.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      }
+    };
+
+    // administradores que pediste
+    const adminEmails = [
+      "davidfermin987@gmail.com",
+      "davidfermin876@gmail.com"
+    ];
+
+    // estado persistente (localStorage) — si más adelante conectas a config.json remoto, reemplaza lectura con fetch
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
+      pesadilla: true,
+      build: true,
+      infeccion: true
+    };
+
+    let selectedEvent = null;
+    let userLoggedIn = false;
+    let isAdmin = false;
+
+    // traducciones (idioma)
     const translations = {
-      es: { play: "JUGAR", admin: "Panel Admin" },
-      en: { play: "PLAY", admin: "Admin Panel" },
+      es: {
+        play: "JUGAR",
+        admin: "Panel Admin",
+        pesadilla: "Pesadilla Hardcore",
+        build: "Build Ethernal Battle",
+        infeccion: "Infección Hardcore"
+      },
+      en: {
+        play: "PLAY",
+        admin: "Admin Panel",
+        pesadilla: "Nightmare Hardcore",
+        build: "Ethernal Build Battle",
+        infeccion: "Infection Hardcore"
+      }
     };
     let currentLang = "es";
-    const languageButton = document.getElementById("languageButton");
-    const playButton = document.getElementById("playButton");
-    const adminTitle = document.querySelector("#adminPanel h3");
 
+    // --- Helpers ---
+    function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
+    function updateAdminButtons() {
+      for (const e in eventStatus) {
+        const btn = document.getElementById("toggle" + capitalize(e));
+        if (!btn) continue;
+        btn.textContent = eventStatus[e] ? "ON" : "OFF";
+        btn.style.background = eventStatus[e]
+          ? "rgba(0,0,100,0.6)"
+          : "rgba(100,0,0,0.6)";
+      }
+    }
+
+    function saveEventStatus() {
+      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
+      // Si en el futuro usas GitHub Actions, aquí llamarías a la dispatch API (requiere token seguro).
+    }
+
+    function applyLanguage() {
+      const t = translations[currentLang];
+      document.getElementById("playButton").textContent = t.play;
+      document.querySelector("#adminPanel h3").textContent = t.admin;
+      // actualiza alt (útil para accesibilidad)
+      document.getElementById("pesadilla").alt = t.pesadilla;
+      document.getElementById("build").alt = t.build;
+      document.getElementById("infeccion").alt = t.infeccion;
+    }
+
+    // --- Inicia: listeners para iconos de evento ---
+    document.querySelectorAll('.event-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        // si el icono es el + (addEvent) manejado abajo
+        if (icon.id === 'addEvent') return;
+
+        // desmarca y marca
+        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+        icon.classList.add('active');
+
+        const event = events[icon.id];
+        if (!event) return;
+        selectedEvent = event;
+
+        // fade fondo
+        document.body.classList.add('fade');
+        setTimeout(() => {
+          document.body.style.backgroundImage = `url('${event.fondo}')`;
+          document.body.classList.remove('fade');
+        }, 500);
+
+        // oculta logo principal y muestra logo del evento
+        document.getElementById('logo').style.display = 'none';
+        const eventLogo = document.getElementById('event-logo');
+        eventLogo.src = event.logo;
+        eventLogo.style.display = 'block';
+        eventLogo.classList.add('show');
+      });
+    });
+
+    // addEvent: muestra alerta (como pediste)
+    const addBtn = document.getElementById('addEvent');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        alert("🛠️ Función de añadir evento próximamente.");
+      });
+    }
+
+    // JUGAR
+    document.getElementById('playButton').addEventListener('click', () => {
+      if (!userLoggedIn) {
+        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+        return;
+      }
+      if (!selectedEvent) {
+        alert('Selecciona un evento primero.');
+        return;
+      }
+      // busca el id del evento seleccionado (por su logo)
+      const id = Object.keys(events).find(key => events[key] === selectedEvent);
+      if (!eventStatus[id]) {
+        alert('🚫 Este evento está temporalmente deshabilitado por un administrador.');
+        return;
+      }
+      window.location.href = selectedEvent.link;
+    });
+
+    // --- MSAL / Login Microsoft ---
+    const msalConfig = {
+      auth: {
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+        authority: "https://login.microsoftonline.com/consumers",
+        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+      }
+    };
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    // login icon
+    const loginButton = document.getElementById('userIcon');
+    loginButton.addEventListener('click', async () => {
+      try {
+        const loginResponse = await msalInstance.loginPopup({ scopes: ["User.Read"] });
+        const account = loginResponse.account;
+        if (!account) throw new Error('No account returned');
+
+        // token silent
+        const tokenResponse = await msalInstance.acquireTokenSilent({ scopes: ["User.Read"], account: account });
+
+        userLoggedIn = true;
+        isAdmin = adminEmails.includes(account.username.toLowerCase());
+
+        // mostrar panel admin si aplica
+        if (isAdmin) {
+          document.getElementById('adminPanel').style.display = 'flex';
+          updateAdminButtons();
+        }
+
+        // cargar foto perfil (si hay)
+        try {
+          const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+            headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+          });
+          if (graphResponse.ok) {
+            const blob = await graphResponse.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            document.getElementById('userIcon').src = imageUrl;
+          }
+        } catch (e) {
+          // si falla, se queda la imagen por defecto
+          console.warn("No se pudo obtener la foto de perfil:", e);
+        }
+
+      } catch (error) {
+        console.error("Error en inicio de sesión:", error);
+        alert("Error al iniciar sesión: " + (error.message || error));
+      }
+    });
+
+    // Admin toggles
+    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
+    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
+    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
+
+    function toggleEvent(eventName) {
+      // Solo permitir si userLoggedIn && isAdmin
+      if (!userLoggedIn || !isAdmin) {
+        alert("No autorizado: debes iniciar sesión como administrador.");
+        return;
+      }
+      eventStatus[eventName] = !eventStatus[eventName];
+      saveEventStatus();
+      updateAdminButtons();
+      // muestra feedback breve
+      const statusEl = document.getElementById('adminStatus');
+      if (statusEl) {
+        statusEl.textContent = "Guardando...";
+        setTimeout(() => { statusEl.textContent = "Cambios guardados automáticamente"; }, 700);
+      }
+      // Si quieres que sea global usando GitHub Actions, aquí invocarías la dispatch (requiere token seguro).
+    }
+
+    // Language button
+    const languageButton = document.getElementById("languageButton");
     languageButton.addEventListener("click", () => {
       currentLang = currentLang === "es" ? "en" : "es";
       languageButton.textContent = currentLang === "es" ? "🌍 ES" : "🌍 EN";
-      const t = translations[currentLang];
-      playButton.textContent = t.play;
-      adminTitle.textContent = t.admin;
+      applyLanguage();
     });
 
-    // 🔹 Nuevo icono de añadir evento (solo muestra alerta por ahora)
-    document.getElementById("addEvent").addEventListener("click", () => {
-      alert("🛠️ Función de añadir evento próximamente.");
-    });
+    // Inicialización
+    (function init() {
+      updateAdminButtons();
+      applyLanguage();
+      // fade inicial show
+      window.addEventListener('load', () => {
+        document.body.classList.add('fade', 'show');
+        const el = document.getElementById('event-logo');
+        if (el) el.classList.add('fade', 'show');
+      });
+    })();
   </script>
 </body>
 </html>
