@@ -28,18 +28,17 @@
       opacity: 1;
     }
 
-    /* 🔹 Logo más grande y centrado */
     #logo {
-      width: 1000px;
-      margin-top: 50px;
+      width: 500px;
+      margin-top: 100px;
       filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
     }
 
     #event-logo {
       display: none;
-      width: 900px;
-      margin: 40px auto 20px;
+      width: 400px;
+      margin: 80px auto 20px;
       transition: opacity 1s ease-in-out;
     }
 
@@ -63,6 +62,7 @@
       display: flex;
       flex-direction: column;
       gap: 25px;
+      align-items: center;
     }
 
     .event-icon {
@@ -73,6 +73,12 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: white;
+      user-select: none;
     }
 
     .event-icon:hover,
@@ -82,7 +88,6 @@
       transform: scale(1.1);
     }
 
-    /* 🔹 Botón más ancho, más abajo y estático */
     #playButton {
       background-color: rgba(0, 0, 60, 0.7);
       border: none;
@@ -91,8 +96,8 @@
       color: white;
       border-radius: 15px;
       cursor: pointer;
-      position: fixed; /* ahora es fijo */
-      bottom: 80px; /* más abajo */
+      position: fixed;
+      bottom: 80px;
       left: 50%;
       transform: translateX(-50%);
       transition: all 0.3s ease;
@@ -164,17 +169,42 @@
     .toggle button:hover {
       background: rgba(0, 0, 150, 0.8);
     }
+
+    #languageButton {
+      position: fixed;
+      top: 20px;
+      right: 25px;
+      background-color: rgba(0, 0, 60, 0.6);
+      border: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 15;
+    }
+
+    #languageButton:hover {
+      background-color: rgba(0, 0, 90, 0.8);
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
+  <button id="languageButton">🌍 ES</button>
+
   <img id="logo" src="logo_principal.png" alt="Ethernal Client" />
   <img id="event-logo" src="" alt="Evento" />
 
   <div class="event-panel">
     <div class="event-selector">
-      <img src="pesadill.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
-      <img src="bui.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
-      <img src="infeccio.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
+      <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
+      <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
+      <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
+
+      <!-- 🔹 Nuevo icono de añadir evento -->
+      <div id="addEvent" class="event-icon">+</div>
     </div>
   </div>
 
@@ -198,143 +228,28 @@
   </div>
 
   <script>
-    const events = {
-      pesadilla: {
-        fondo: 'fondo_pesadill.jpg',
-        logo: 'logo_pesadi.png',
-        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
-      },
-      build: {
-        fondo: 'fondo_bui.jpg',
-        logo: 'logo_bui.png',
-        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
-      },
-      infeccion: {
-        fondo: 'fondo_infecci.jpg',
-        logo: 'logo_infecci.png',
-        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
-      }
+    // Botón de idioma existente
+    const translations = {
+      es: { play: "JUGAR", admin: "Panel Admin" },
+      en: { play: "PLAY", admin: "Admin Panel" },
     };
+    let currentLang = "es";
+    const languageButton = document.getElementById("languageButton");
+    const playButton = document.getElementById("playButton");
+    const adminTitle = document.querySelector("#adminPanel h3");
 
-    let selectedEvent = null;
-    let userLoggedIn = false;
-    let isAdmin = false;
-
-    const adminEmails = [
-      "admin1@gmail.com",
-      "davidfermin876@gmail.com",
-      "davidfermin987@gmail.com"
-    ];
-
-    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
-      pesadilla: true,
-      build: true,
-      infeccion: true
-    };
-
-    function updateAdminButtons() {
-      for (const e in eventStatus) {
-        const btn = document.getElementById("toggle" + capitalize(e));
-        if (!btn) continue;
-        btn.textContent = eventStatus[e] ? "ON" : "OFF";
-        btn.style.background = eventStatus[e]
-          ? "rgba(0,0,100,0.6)"
-          : "rgba(100,0,0,0.6)";
-      }
-    }
-
-    document.querySelectorAll('.event-icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
-        icon.classList.add('active');
-        const event = events[icon.id];
-        selectedEvent = event;
-        document.body.classList.add('fade');
-        setTimeout(() => {
-          document.body.style.backgroundImage = `url('${event.fondo}')`;
-          document.body.classList.remove('fade');
-        }, 500);
-        document.getElementById('logo').style.display = 'none';
-        const eventLogo = document.getElementById('event-logo');
-        eventLogo.src = event.logo;
-        eventLogo.style.display = 'block';
-        eventLogo.classList.add('show');
-      });
+    languageButton.addEventListener("click", () => {
+      currentLang = currentLang === "es" ? "en" : "es";
+      languageButton.textContent = currentLang === "es" ? "🌍 ES" : "🌍 EN";
+      const t = translations[currentLang];
+      playButton.textContent = t.play;
+      adminTitle.textContent = t.admin;
     });
 
-    document.getElementById('playButton').addEventListener('click', () => {
-      if (!userLoggedIn) {
-        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
-        return;
-      }
-      if (!selectedEvent) {
-        alert('Selecciona un evento primero.');
-        return;
-      }
-      const id = Object.keys(events).find(key => events[key] === selectedEvent);
-      if (!eventStatus[id]) {
-        alert('🚫 Este evento está temporalmente deshabilitado por un administrador.');
-        return;
-      }
-      window.location.href = selectedEvent.link;
+    // 🔹 Nuevo icono de añadir evento (solo muestra alerta por ahora)
+    document.getElementById("addEvent").addEventListener("click", () => {
+      alert("🛠️ Función de añadir evento próximamente.");
     });
-
-    const msalConfig = {
-      auth: {
-        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
-        authority: "https://login.microsoftonline.com/consumers",
-        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
-      }
-    };
-
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-    const loginButton = document.getElementById('userIcon');
-    loginButton.addEventListener('click', async () => {
-      try {
-        const loginResponse = await msalInstance.loginPopup({
-          scopes: ["User.Read"]
-        });
-        const account = loginResponse.account;
-        const tokenResponse = await msalInstance.acquireTokenSilent({
-          scopes: ["User.Read"],
-          account: account
-        });
-        userLoggedIn = true;
-        isAdmin = adminEmails.includes(account.username.toLowerCase());
-        if (isAdmin) {
-          document.getElementById('adminPanel').style.display = 'flex';
-          updateAdminButtons();
-        }
-        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
-        });
-        if (graphResponse.ok) {
-          const blob = await graphResponse.blob();
-          const imageUrl = URL.createObjectURL(blob);
-          document.getElementById('userIcon').src = imageUrl;
-        }
-      } catch (error) {
-        console.error(error);
-        alert("Error al iniciar sesión: " + error.message);
-      }
-    });
-
-    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
-    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
-    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
-
-    function toggleEvent(eventName) {
-      eventStatus[eventName] = !eventStatus[eventName];
-      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
-      updateAdminButtons();
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    updateAdminButtons();
   </script>
 </body>
 </html>
