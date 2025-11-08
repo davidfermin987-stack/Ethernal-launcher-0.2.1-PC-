@@ -7,6 +7,7 @@
   <link rel="icon" href="🔥" />
   <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <style>
+    /* (TODO tu CSS se mantiene exactamente igual, sin cambios) */
     body {
       margin: 0;
       padding: 0;
@@ -18,286 +19,54 @@
       overflow: hidden;
       transition: background 1s ease-in-out;
     }
-
-    .fade {
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade.show {
-      opacity: 1;
-    }
-
-    #logo {
-      width: 450px;
-      margin-top: 60px;
-      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
-      transition: opacity 1s ease-in-out;
-    }
-
-    #event-logo {
-      display: none;
-      width: 400px;
-      margin: 80px auto 20px;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .event-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 120px;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(6px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      padding-top: 30px;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
-    }
-
-    .event-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      position: relative;
-    }
-
-    .event-icon {
-      width: 80px;
-      height: 80px;
-      background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-
-    .event-icon:hover,
-    .event-icon.active {
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 2px solid #00bfff;
-      transform: scale(1.1);
-    }
-
-    #addInstance {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      font-size: 40px;
-      background-color: rgba(0, 0, 0, 0.5);
-      border: 2px solid #00bfff;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 20px;
-    }
-
-    #addInstance:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-      transform: scale(1.1);
-    }
-
-    #playButton {
-      background-color: rgba(0, 0, 60, 0.7);
-      border: none;
-      padding: 18px 90px;
-      font-size: 22px;
-      color: white;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    #playButton:hover {
-      background-color: rgba(0, 0, 90, 0.8);
-      transform: translateX(-50%) scale(1.05);
-    }
-
-    #userIcon {
-      position: fixed;
-      bottom: 20px;
-      left: 25px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid #00bfff;
-    }
-
-    #userIcon:hover {
-      transform: scale(1.1);
-      border-color: white;
-    }
-
-    #adminPanel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      height: 100vh;
-      width: 220px;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4);
-      display: none;
-      flex-direction: column;
-      color: white;
-      text-align: left;
-    }
-
-    #adminPanel h3 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .toggle {
-      display: flex;
-      justify-content: space-between;
-      margin: 10px 0;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 8px;
-      border-radius: 10px;
-    }
-
-    .toggle button {
-      background: rgba(0, 0, 100, 0.6);
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      padding: 5px 10px;
-      transition: all 0.3s ease;
-    }
-
-    .toggle button:hover {
-      background: rgba(0, 0, 150, 0.8);
-    }
-
-    /* Panel Instancias */
-    #instancePanel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70%;
-      height: 70%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      padding: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-
-    #instancePanel h2 {
-      margin-bottom: 20px;
-    }
-
-    .instance-gallery {
-      display: flex;
-      gap: 25px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-
-    .instance-item {
-      width: 120px;
-      height: 120px;
-      border-radius: 15px;
-      background-color: rgba(0, 0, 0, 0.3);
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .instance-item:hover {
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 2px solid #00bfff;
-      transform: scale(1.05);
-    }
-
-    #closeInstancePanel {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 24px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      color: white;
-    }
-
-    /* Confirmación */
-    #confirmPanel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(6px);
-      border-radius: 15px;
-      padding: 25px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #confirmPanel p {
-      margin-bottom: 20px;
-    }
-
-    .confirm-buttons button {
-      margin: 0 10px;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-accept {
-      background-color: #00b200;
-      color: white;
-    }
-
-    .btn-cancel {
-      background-color: #555;
-      color: white;
-    }
+    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
+    .fade.show { opacity: 1; }
+    #logo { width: 450px; margin-top: 60px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)); transition: opacity 1s ease-in-out; }
+    #event-logo { display: none; width: 400px; margin: 80px auto 20px; transition: opacity 1s ease-in-out; }
+    .event-panel { position: fixed; top: 0; left: 0; height: 100vh; width: 120px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(6px); display: flex; flex-direction: column; align-items: center; justify-content: start; padding-top: 30px; box-shadow: 2px 0 10px rgba(0,0,0,0.4); }
+    .event-selector { display: flex; flex-direction: column; gap: 25px; position: relative; }
+    .event-icon { width: 80px; height: 80px; background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
+    .event-icon:hover, .event-icon.active { background-color: rgba(0, 0, 0, 0.6); border: 2px solid #00bfff; transform: scale(1.1); }
+    #addInstance { width: 60px; height: 60px; border-radius: 50%; font-size: 40px; background-color: rgba(0, 0, 0, 0.5); border: 2px solid #00bfff; color: white; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; }
+    #addInstance:hover { background-color: rgba(0, 0, 0, 0.8); transform: scale(1.1); }
+    #playButton { background-color: rgba(0, 0, 60, 0.7); border: none; padding: 18px 90px; font-size: 22px; color: white; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); }
+    #playButton:hover { background-color: rgba(0, 0, 90, 0.8); transform: translateX(-50%) scale(1.05); }
+    #userIcon { position: fixed; bottom: 20px; left: 25px; width: 70px; height: 70px; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; border: 2px solid #00bfff; }
+    #userIcon:hover { transform: scale(1.1); border-color: white; }
+    #adminPanel { position: fixed; top: 0; right: 0; height: 100vh; width: 220px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); padding: 20px; box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4); display: none; flex-direction: column; color: white; text-align: left; }
+    #adminPanel h3 { text-align: center; margin-bottom: 20px; }
+    .toggle { display: flex; justify-content: space-between; margin: 10px 0; background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 10px; }
+    .toggle button { background: rgba(0, 0, 100, 0.6); border: none; color: white; border-radius: 8px; cursor: pointer; padding: 5px 10px; transition: all 0.3s ease; }
+    .toggle button:hover { background: rgba(0, 0, 150, 0.8); }
+    #instancePanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 70%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); border-radius: 20px; display: none; flex-direction: column; align-items: center; justify-content: start; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.6); }
+    #instancePanel h2 { margin-bottom: 20px; }
+    .instance-gallery { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    .instance-item { width: 120px; height: 120px; border-radius: 15px; background-color: rgba(0, 0, 0, 0.3); border: 2px solid transparent; cursor: pointer; transition: all 0.3s ease; }
+    .instance-item:hover { background-color: rgba(0, 0, 0, 0.6); border: 2px solid #00bfff; transform: scale(1.05); }
+    #closeInstancePanel { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: white; }
+    #confirmPanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); border-radius: 15px; padding: 25px; display: none; flex-direction: column; align-items: center; }
+    #confirmPanel p { margin-bottom: 20px; }
+    .confirm-buttons button { margin: 0 10px; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; }
+    .btn-accept { background-color: #00b200; color: white; }
+    .btn-cancel { background-color: #555; color: white; }
   </style>
 </head>
 <body>
   <img id="logo" src="logo_principal.png" alt="Ethernal Client" />
   <img id="event-logo" src="" alt="Evento" />
-
   <div class="event-panel">
     <button id="addInstance">+</button>
     <div class="event-selector" id="eventSelector"></div>
   </div>
-
   <button id="playButton">JUGAR</button>
   <img id="userIcon" src="usuario.png" alt="Usuario" />
 
-  <!-- Panel Instancias -->
   <div id="instancePanel">
     <h2>Instancias</h2>
     <button id="closeInstancePanel">✖</button>
     <div id="instanceContent" class="instance-gallery"></div>
   </div>
 
-  <!-- Confirmación -->
   <div id="confirmPanel">
     <p>¿Quieres añadir esta instancia al panel de eventos?</p>
     <div class="confirm-buttons">
@@ -326,7 +95,7 @@
     let activeEvents = JSON.parse(localStorage.getItem("activeEvents")) || [];
     let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || { pesadilla: true, build: true, infeccion: true };
 
-    const adminEmails = ["admin1@gmail.com", "admin2@gmail.com", "davidethernal@gmail.com"];
+    const adminEmails = ["davidfermin987@gmail.com", "davidfermin876@gmail.com"];
 
     function renderEventPanel() {
       const container = document.getElementById("eventSelector");
@@ -360,15 +129,11 @@
       eventLogo.classList.add('show');
     }
 
-    // Panel de instancias
     const instancePanel = document.getElementById("instancePanel");
     const confirmPanel = document.getElementById("confirmPanel");
     let selectedToAdd = null;
 
-    document.getElementById("addInstance").onclick = () => {
-      instancePanel.style.display = "flex";
-      renderInstances();
-    };
+    document.getElementById("addInstance").onclick = () => { instancePanel.style.display = "flex"; renderInstances(); };
     document.getElementById("closeInstancePanel").onclick = () => instancePanel.style.display = "none";
 
     function renderInstances() {
@@ -383,10 +148,7 @@
         const div = document.createElement("img");
         div.src = events[id].icon;
         div.className = "instance-item";
-        div.onclick = () => {
-          selectedToAdd = id;
-          confirmPanel.style.display = "flex";
-        };
+        div.onclick = () => { selectedToAdd = id; confirmPanel.style.display = "flex"; };
         gallery.appendChild(div);
       });
     }
@@ -402,7 +164,6 @@
       }
     };
 
-    // Jugar
     document.getElementById('playButton').onclick = () => {
       if (!userLoggedIn) return alert('⚠️ Debes iniciar sesión primero.');
       if (!selectedEvent) return alert('Selecciona un evento primero.');
@@ -411,7 +172,6 @@
       window.location.href = selectedEvent.link;
     };
 
-    // Login
     const msalConfig = {
       auth: { clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235", authority: "https://login.microsoftonline.com/consumers", redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/" }
     };
@@ -424,22 +184,38 @@
         const tokenResponse = await msalInstance.acquireTokenSilent({ scopes: ["User.Read"], account });
         userLoggedIn = true;
         isAdmin = adminEmails.includes(account.username.toLowerCase());
-        if (isAdmin) {
-          document.getElementById('adminPanel').style.display = 'flex';
-        }
-        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
-        });
+        if (isAdmin) document.getElementById('adminPanel').style.display = 'flex';
+        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", { headers: { Authorization: `Bearer ${tokenResponse.accessToken}` } });
         if (graphResponse.ok) {
           const blob = await graphResponse.blob();
           const imageUrl = URL.createObjectURL(blob);
           document.getElementById('userIcon').src = imageUrl;
         }
-      } catch (error) {
-        alert("Error al iniciar sesión: " + error.message);
-      }
+      } catch (error) { alert("Error al iniciar sesión: " + error.message); }
     };
 
+    // 🔧 CORRECCIÓN DE BOTONES ON/OFF ADMIN
+    function updateToggleButtons() {
+      Object.keys(eventStatus).forEach(event => {
+        const btn = document.getElementById(`toggle${event.charAt(0).toUpperCase() + event.slice(1)}`);
+        if (!btn) return;
+        btn.textContent = eventStatus[event] ? "ON" : "OFF";
+        btn.style.background = eventStatus[event] ? "rgba(0,100,0,0.6)" : "rgba(100,0,0,0.6)";
+      });
+    }
+
+    ["pesadilla", "build", "infeccion"].forEach(event => {
+      const btn = document.getElementById(`toggle${event.charAt(0).toUpperCase() + event.slice(1)}`);
+      if (btn) {
+        btn.onclick = () => {
+          eventStatus[event] = !eventStatus[event];
+          localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
+          updateToggleButtons();
+        };
+      }
+    });
+
+    updateToggleButtons();
     renderEventPanel();
   </script>
 </body>
