@@ -19,17 +19,11 @@
       transition: background 1s ease-in-out;
     }
 
-    .fade {
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade.show {
-      opacity: 1;
-    }
+    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
+    .fade.show { opacity: 1; }
 
     #logo {
-      width: 400px;
+      width: 500px;
       margin-top: 60px;
       filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
@@ -81,22 +75,23 @@
       transform: scale(1.1);
     }
 
-    #addEvent {
-      width: 80px;
-      height: 80px;
-      font-size: 40px;
-      background-color: rgba(0, 0, 0, 0.3);
+    #addInstanceBtn {
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border: 2px solid #00bfff;
       color: white;
-      border-radius: 15px;
-      border: 2px solid transparent;
+      font-size: 40px;
       cursor: pointer;
-      margin-top: 20px;
+      line-height: 70px;
+      text-align: center;
+      margin-top: 30px;
       transition: all 0.3s ease;
     }
 
-    #addEvent:hover {
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 2px solid #00bfff;
+    #addInstanceBtn:hover {
+      background: rgba(0, 0, 0, 0.6);
       transform: scale(1.1);
     }
 
@@ -154,10 +149,7 @@
       text-align: left;
     }
 
-    #adminPanel h3 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    #adminPanel h3 { text-align: center; margin-bottom: 20px; }
 
     .toggle {
       display: flex;
@@ -178,65 +170,105 @@
       transition: all 0.3s ease;
     }
 
-    .toggle button:hover {
-      background: rgba(0, 0, 150, 0.8);
-    }
+    .toggle button:hover { background: rgba(0, 0, 150, 0.8); }
 
-    /* Panel de instancias flotante */
-    #instancePanel {
+    /* Panel de instancias */
+    #instancesPanel {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(10, 10, 25, 0.7);
-      backdrop-filter: blur(6px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    #instanceContent {
-      position: relative;
-      width: 600px;
-      max-width: 90%;
-      background: rgba(0, 0, 40, 0.8);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      width: 70%;
+      height: 70%;
       border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-      padding: 40px;
-      text-align: center;
-      color: white;
-      font-size: 20px;
-      animation: fadeIn 0.3s ease;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
-    #instanceContent h2 {
+    #instancesPanel h2 {
       margin-top: 0;
-      margin-bottom: 30px;
-      font-size: 28px;
-      letter-spacing: 1px;
+      text-align: center;
     }
 
-    #closeInstance {
+    #closeInstances {
       position: absolute;
-      top: 10px;
-      right: 15px;
-      background: transparent;
-      border: none;
+      top: 15px;
+      right: 20px;
+      background: none;
       color: white;
-      font-size: 26px;
+      border: none;
+      font-size: 30px;
       cursor: pointer;
-      transition: color 0.3s ease;
     }
 
-    #closeInstance:hover {
-      color: #ff4444;
+    .instance-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 50px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+    .instance-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 15px;
+      cursor: pointer;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .instance-card:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+
+    .instance-card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    /* Panel de confirmación */
+    #confirmPanel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 15px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .confirm-buttons button {
+      padding: 10px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #acceptBtn {
+      background: green;
+      color: white;
+    }
+
+    #cancelBtn {
+      background: gray;
+      color: white;
     }
   </style>
 </head>
@@ -245,12 +277,8 @@
   <img id="event-logo" src="" alt="Evento" />
 
   <div class="event-panel">
-    <div class="event-selector">
-      <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
-      <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
-      <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
-      <button id="addEvent">+</button>
-    </div>
+    <div class="event-selector" id="eventSelector"></div>
+    <div id="addInstanceBtn">+</div>
   </div>
 
   <button id="playButton">JUGAR</button>
@@ -272,12 +300,32 @@
     </div>
   </div>
 
-  <!-- Panel de Instancias -->
-  <div id="instancePanel">
-    <div id="instanceContent">
-      <button id="closeInstance">✖</button>
-      <h2>Instancias</h2>
-      <p id="noInstancesText">No hay instancias disponibles</p>
+  <!-- Panel de instancias -->
+  <div id="instancesPanel">
+    <button id="closeInstances">✖</button>
+    <h2>Instancias</h2>
+    <div class="instance-gallery">
+      <div class="instance-card" data-id="pesadilla">
+        <img src="pesadilla.png" alt="Pesadilla">
+        <p>Pesadilla Hardcore</p>
+      </div>
+      <div class="instance-card" data-id="build">
+        <img src="build.png" alt="Build">
+        <p>Build Ethernal Battle</p>
+      </div>
+      <div class="instance-card" data-id="infeccion">
+        <img src="infeccion.png" alt="Infección">
+        <p>Infección Hardcore</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de confirmación -->
+  <div id="confirmPanel">
+    <p>¿Quieres añadir esta instancia al panel de eventos?</p>
+    <div class="confirm-buttons">
+      <button id="acceptBtn">Aceptar</button>
+      <button id="cancelBtn">Cancelar</button>
     </div>
   </div>
 
@@ -291,121 +339,82 @@
     let selectedEvent = null;
     let userLoggedIn = false;
     let isAdmin = false;
+    const adminEmails = ["admin1@gmail.com", "admin2@gmail.com", "davidethernal@gmail.com"];
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || { pesadilla: true, build: true, infeccion: true };
 
-    const adminEmails = ["davidfermin987@gmail.com", "davidfermin876@gmail.com"];
-
-    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
-      pesadilla: true, build: true, infeccion: true
-    };
+    const eventSelector = document.getElementById('eventSelector');
+    const instancesPanel = document.getElementById('instancesPanel');
+    const confirmPanel = document.getElementById('confirmPanel');
+    let selectedToAdd = null;
 
     function updateAdminButtons() {
       for (const e in eventStatus) {
-        const btn = document.getElementById("toggle" + capitalize(e));
+        const btn = document.getElementById("toggle" + e.charAt(0).toUpperCase() + e.slice(1));
         if (!btn) continue;
         btn.textContent = eventStatus[e] ? "ON" : "OFF";
-        btn.style.background = eventStatus[e]
-          ? "rgba(0,0,100,0.6)"
-          : "rgba(100,0,0,0.6)";
+        btn.style.background = eventStatus[e] ? "rgba(0,0,100,0.6)" : "rgba(100,0,0,0.6)";
       }
     }
 
-    document.querySelectorAll('.event-icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
-        icon.classList.add('active');
-        const event = events[icon.id];
-        selectedEvent = event;
-        document.body.classList.add('fade');
-        setTimeout(() => {
-          document.body.style.backgroundImage = `url('${event.fondo}')`;
-          document.body.classList.remove('fade');
-        }, 500);
-        document.getElementById('logo').style.display = 'none';
-        const eventLogo = document.getElementById('event-logo');
-        eventLogo.src = event.logo;
-        eventLogo.style.display = 'block';
-        eventLogo.classList.add('show');
-      });
-    });
+    function addEventIcon(id) {
+      if (document.getElementById(id)) return;
+      const img = document.createElement('img');
+      img.src = id + '.png';
+      img.id = id;
+      img.className = 'event-icon';
+      img.alt = id;
+      img.addEventListener('click', () => selectEvent(id));
+      eventSelector.appendChild(img);
+    }
 
-    document.getElementById('playButton').addEventListener('click', () => {
-      if (!userLoggedIn) {
-        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
-        return;
-      }
-      if (!selectedEvent) {
-        alert('Selecciona un evento primero.');
-        return;
-      }
-      const id = Object.keys(events).find(key => events[key] === selectedEvent);
-      if (!eventStatus[id]) {
-        alert('🚫 Este evento está deshabilitado por un administrador.');
-        return;
-      }
-      window.location.href = selectedEvent.link;
-    });
+    function selectEvent(id) {
+      document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+      const icon = document.getElementById(id);
+      icon.classList.add('active');
+      const event = events[id];
+      selectedEvent = event;
+      document.body.classList.add('fade');
+      setTimeout(() => {
+        document.body.style.backgroundImage = `url('${event.fondo}')`;
+        document.body.classList.remove('fade');
+      }, 500);
+      document.getElementById('logo').style.display = 'none';
+      const eventLogo = document.getElementById('event-logo');
+      eventLogo.src = event.logo;
+      eventLogo.style.display = 'block';
+      eventLogo.classList.add('show');
+    }
 
-    const msalConfig = {
-      auth: {
-        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
-        authority: "https://login.microsoftonline.com/consumers",
-        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
-      }
+    document.getElementById('addInstanceBtn').onclick = () => {
+      instancesPanel.style.display = 'flex';
+    };
+    document.getElementById('closeInstances').onclick = () => {
+      instancesPanel.style.display = 'none';
     };
 
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-    const loginButton = document.getElementById('userIcon');
-    loginButton.addEventListener('click', async () => {
-      try {
-        const loginResponse = await msalInstance.loginPopup({ scopes: ["User.Read"] });
-        const account = loginResponse.account;
-        const tokenResponse = await msalInstance.acquireTokenSilent({ scopes: ["User.Read"], account: account });
-        userLoggedIn = true;
-        isAdmin = adminEmails.includes(account.username.toLowerCase());
-        if (isAdmin) {
-          document.getElementById('adminPanel').style.display = 'flex';
-          updateAdminButtons();
-        }
-        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
-        });
-        if (graphResponse.ok) {
-          const blob = await graphResponse.blob();
-          const imageUrl = URL.createObjectURL(blob);
-          document.getElementById('userIcon').src = imageUrl;
-        }
-      } catch (error) {
-        console.error(error);
-        alert("Error al iniciar sesión: " + error.message);
-      }
+    document.querySelectorAll('.instance-card').forEach(card => {
+      card.onclick = () => {
+        selectedToAdd = card.dataset.id;
+        confirmPanel.style.display = 'flex';
+      };
     });
 
-    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
-    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
-    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
+    document.getElementById('acceptBtn').onclick = () => {
+      addEventIcon(selectedToAdd);
+      confirmPanel.style.display = 'none';
+      instancesPanel.style.display = 'none';
+    };
 
-    function toggleEvent(eventName) {
-      eventStatus[eventName] = !eventStatus[eventName];
-      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
-      updateAdminButtons();
-    }
+    document.getElementById('cancelBtn').onclick = () => {
+      confirmPanel.style.display = 'none';
+    };
 
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Panel de instancias
-    const instancePanel = document.getElementById("instancePanel");
-    const closeInstance = document.getElementById("closeInstance");
-    const addEventButton = document.getElementById("addEvent");
-
-    addEventButton.addEventListener("click", () => {
-      instancePanel.style.display = "flex";
-    });
-
-    closeInstance.addEventListener("click", () => {
-      instancePanel.style.display = "none";
+    document.getElementById('playButton').addEventListener('click', () => {
+      if (!userLoggedIn) return alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+      if (!selectedEvent) return alert('Selecciona un evento primero.');
+      const id = Object.keys(events).find(key => events[key] === selectedEvent);
+      if (!eventStatus[id]) return alert('🚫 Este evento está deshabilitado por un administrador.');
+      window.location.href = selectedEvent.link;
     });
 
     updateAdminButtons();
