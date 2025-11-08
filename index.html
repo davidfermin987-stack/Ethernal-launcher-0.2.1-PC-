@@ -19,12 +19,18 @@
       transition: background 1s ease-in-out;
     }
 
-    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
-    .fade.show { opacity: 1; }
+    .fade {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .fade.show {
+      opacity: 1;
+    }
 
     #logo {
-      width: 500px;
-      margin-top: 60px;
+      width: 420px;
+      margin-top: 80px;
       filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
     }
@@ -75,26 +81,6 @@
       transform: scale(1.1);
     }
 
-    #addInstanceBtn {
-      width: 70px;
-      height: 70px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      border: 2px solid #00bfff;
-      color: white;
-      font-size: 40px;
-      cursor: pointer;
-      line-height: 70px;
-      text-align: center;
-      margin-top: 30px;
-      transition: all 0.3s ease;
-    }
-
-    #addInstanceBtn:hover {
-      background: rgba(0, 0, 0, 0.6);
-      transform: scale(1.1);
-    }
-
     #playButton {
       background-color: rgba(0, 0, 60, 0.7);
       border: none;
@@ -103,10 +89,10 @@
       color: white;
       border-radius: 15px;
       cursor: pointer;
-      margin-top: 40px;
+      margin-top: 60px;
       transition: all 0.3s ease;
       position: fixed;
-      bottom: 60px;
+      bottom: 120px;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -149,7 +135,10 @@
       text-align: left;
     }
 
-    #adminPanel h3 { text-align: center; margin-bottom: 20px; }
+    #adminPanel h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
     .toggle {
       display: flex;
@@ -170,105 +159,8 @@
       transition: all 0.3s ease;
     }
 
-    .toggle button:hover { background: rgba(0, 0, 150, 0.8); }
-
-    /* Panel de instancias */
-    #instancesPanel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      width: 70%;
-      height: 70%;
-      border-radius: 20px;
-      padding: 20px;
-      display: none;
-      flex-direction: column;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-
-    #instancesPanel h2 {
-      margin-top: 0;
-      text-align: center;
-    }
-
-    #closeInstances {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      background: none;
-      color: white;
-      border: none;
-      font-size: 30px;
-      cursor: pointer;
-    }
-
-    .instance-gallery {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 50px;
-    }
-
-    .instance-card {
-      background: rgba(255,255,255,0.1);
-      border-radius: 15px;
-      padding: 15px;
-      cursor: pointer;
-      width: 180px;
-      transition: all 0.3s ease;
-    }
-
-    .instance-card:hover {
-      background: rgba(255,255,255,0.2);
-      transform: scale(1.05);
-    }
-
-    .instance-card img {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    /* Panel de confirmación */
-    #confirmPanel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 15px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .confirm-buttons {
-      display: flex;
-      gap: 20px;
-    }
-
-    .confirm-buttons button {
-      padding: 10px 25px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    #acceptBtn {
-      background: green;
-      color: white;
-    }
-
-    #cancelBtn {
-      background: gray;
-      color: white;
+    .toggle button:hover {
+      background: rgba(0, 0, 150, 0.8);
     }
   </style>
 </head>
@@ -277,8 +169,11 @@
   <img id="event-logo" src="" alt="Evento" />
 
   <div class="event-panel">
-    <div class="event-selector" id="eventSelector"></div>
-    <div id="addInstanceBtn">+</div>
+    <div class="event-selector">
+      <img src="pesadilla.png" id="pesadilla" class="event-icon" alt="Pesadilla Hardcore" />
+      <img src="build.png" id="build" class="event-icon" alt="Build Ethernal Battle" />
+      <img src="infeccion.png" id="infeccion" class="event-icon" alt="Infección Hardcore" />
+    </div>
   </div>
 
   <button id="playButton">JUGAR</button>
@@ -300,124 +195,161 @@
     </div>
   </div>
 
-  <!-- Panel de instancias -->
-  <div id="instancesPanel">
-    <button id="closeInstances">✖</button>
-    <h2>Instancias</h2>
-    <div class="instance-gallery">
-      <div class="instance-card" data-id="pesadilla">
-        <img src="pesadilla.png" alt="Pesadilla">
-        <p>Pesadilla Hardcore</p>
-      </div>
-      <div class="instance-card" data-id="build">
-        <img src="build.png" alt="Build">
-        <p>Build Ethernal Battle</p>
-      </div>
-      <div class="instance-card" data-id="infeccion">
-        <img src="infeccion.png" alt="Infección">
-        <p>Infección Hardcore</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Panel de confirmación -->
-  <div id="confirmPanel">
-    <p>¿Quieres añadir esta instancia al panel de eventos?</p>
-    <div class="confirm-buttons">
-      <button id="acceptBtn">Aceptar</button>
-      <button id="cancelBtn">Cancelar</button>
-    </div>
-  </div>
-
   <script>
     const events = {
-      pesadilla: { fondo: 'fondo_pesadilla.jpg', logo: 'logo_pesadilla.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' },
-      build: { fondo: 'fondo_build.jpg', logo: 'logo_build.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' },
-      infeccion: { fondo: 'fondo_infeccion.jpg', logo: 'logo_infeccion.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' }
+      pesadilla: {
+        fondo: 'fondo_pesadilla.jpg',
+        logo: 'logo_pesadilla.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      build: {
+        fondo: 'fondo_build.jpg',
+        logo: 'logo_build.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      },
+      infeccion: {
+        fondo: 'fondo_infeccion.jpg',
+        logo: 'logo_infeccion.png',
+        link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240'
+      }
     };
 
     let selectedEvent = null;
     let userLoggedIn = false;
     let isAdmin = false;
-    const adminEmails = ["admin1@gmail.com", "davidfermin987@gmail.com", "davidfermin876@gmail.com"];
-    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || { pesadilla: true, build: true, infeccion: true };
 
-    const eventSelector = document.getElementById('eventSelector');
-    const instancesPanel = document.getElementById('instancesPanel');
-    const confirmPanel = document.getElementById('confirmPanel');
-    let selectedToAdd = null;
+    const adminEmails = [
+      "admin1@gmail.com",
+      "davidfermin987@gmail.com",
+      "davidfermin876@gmail.com"
+    ];
+
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || {
+      pesadilla: true,
+      build: true,
+      infeccion: true
+    };
 
     function updateAdminButtons() {
       for (const e in eventStatus) {
-        const btn = document.getElementById("toggle" + e.charAt(0).toUpperCase() + e.slice(1));
+        const btn = document.getElementById("toggle" + capitalize(e));
         if (!btn) continue;
         btn.textContent = eventStatus[e] ? "ON" : "OFF";
-        btn.style.background = eventStatus[e] ? "rgba(0,0,100,0.6)" : "rgba(100,0,0,0.6)";
+        btn.style.background = eventStatus[e]
+          ? "rgba(0,0,100,0.6)"
+          : "rgba(100,0,0,0.6)";
       }
     }
 
-    function addEventIcon(id) {
-      if (document.getElementById(id)) return;
-      const img = document.createElement('img');
-      img.src = id + '.png';
-      img.id = id;
-      img.className = 'event-icon';
-      img.alt = id;
-      img.addEventListener('click', () => selectEvent(id));
-      eventSelector.appendChild(img);
-    }
-
-    function selectEvent(id) {
-      document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
-      const icon = document.getElementById(id);
-      icon.classList.add('active');
-      const event = events[id];
-      selectedEvent = event;
-      document.body.classList.add('fade');
-      setTimeout(() => {
-        document.body.style.backgroundImage = `url('${event.fondo}')`;
-        document.body.classList.remove('fade');
-      }, 500);
-      document.getElementById('logo').style.display = 'none';
-      const eventLogo = document.getElementById('event-logo');
-      eventLogo.src = event.logo;
-      eventLogo.style.display = 'block';
-      eventLogo.classList.add('show');
-    }
-
-    document.getElementById('addInstanceBtn').onclick = () => {
-      instancesPanel.style.display = 'flex';
-    };
-    document.getElementById('closeInstances').onclick = () => {
-      instancesPanel.style.display = 'none';
-    };
-
-    document.querySelectorAll('.instance-card').forEach(card => {
-      card.onclick = () => {
-        selectedToAdd = card.dataset.id;
-        confirmPanel.style.display = 'flex';
-      };
+    document.querySelectorAll('.event-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+        icon.classList.add('active');
+        const event = events[icon.id];
+        selectedEvent = event;
+        document.body.classList.add('fade');
+        setTimeout(() => {
+          document.body.style.backgroundImage = `url('${event.fondo}')`;
+          document.body.classList.remove('fade');
+        }, 500);
+        document.getElementById('logo').style.display = 'none';
+        const eventLogo = document.getElementById('event-logo');
+        eventLogo.src = event.logo;
+        eventLogo.style.display = 'block';
+        eventLogo.classList.add('show');
+      });
     });
 
-    document.getElementById('acceptBtn').onclick = () => {
-      addEventIcon(selectedToAdd);
-      confirmPanel.style.display = 'none';
-      instancesPanel.style.display = 'none';
-    };
-
-    document.getElementById('cancelBtn').onclick = () => {
-      confirmPanel.style.display = 'none';
-    };
-
     document.getElementById('playButton').addEventListener('click', () => {
-      if (!userLoggedIn) return alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
-      if (!selectedEvent) return alert('Selecciona un evento primero.');
+      if (!userLoggedIn) {
+        alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+        return;
+      }
+      if (!selectedEvent) {
+        alert('Selecciona un evento primero.');
+        return;
+      }
       const id = Object.keys(events).find(key => events[key] === selectedEvent);
-      if (!eventStatus[id]) return alert('🚫 Este evento está deshabilitado por un administrador.');
+      if (!eventStatus[id]) {
+        alert('🚫 Este evento está temporalmente deshabilitado por un administrador.');
+        return;
+      }
       window.location.href = selectedEvent.link;
     });
 
+    const msalConfig = {
+      auth: {
+        clientId: "93b23afb-1aa3-461d-8fed-a82e6874a235",
+        authority: "https://login.microsoftonline.com/consumers",
+        redirectUri: "https://davidfermin987-stack.github.io/Ethernal-launcher-0.2.1-PC-/"
+      }
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    const loginButton = document.getElementById('userIcon');
+    loginButton.addEventListener('click', async () => {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["User.Read"]
+        });
+        const account = loginResponse.account;
+        const tokenResponse = await msalInstance.acquireTokenSilent({
+          scopes: ["User.Read"],
+          account: account
+        });
+        userLoggedIn = true;
+        isAdmin = adminEmails.includes(account.username.toLowerCase());
+        if (isAdmin) {
+          document.getElementById('adminPanel').style.display = 'flex';
+          updateAdminButtons();
+        }
+        const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+          headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+        });
+        if (graphResponse.ok) {
+          const blob = await graphResponse.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          document.getElementById('userIcon').src = imageUrl;
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    });
+
+    document.getElementById('togglePesadilla').onclick = () => toggleEvent('pesadilla');
+    document.getElementById('toggleBuild').onclick = () => toggleEvent('build');
+    document.getElementById('toggleInfeccion').onclick = () => toggleEvent('infeccion');
+
+    function toggleEvent(eventName) {
+      eventStatus[eventName] = !eventStatus[eventName];
+      localStorage.setItem("eventStatus", JSON.stringify(eventStatus));
+      updateAdminButtons();
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     updateAdminButtons();
+  </script>
+
+  <!-- 🔹 Arreglo adicional para asegurar el inicio de sesión -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const loginBtn = document.getElementById("userIcon");
+
+      if (loginBtn) {
+        loginBtn.addEventListener("click", () => {
+          if (typeof msalInstance !== "undefined") {
+            console.log("Iniciando sesión...");
+          } else {
+            alert("El sistema de inicio de sesión no está listo. Recarga la página e inténtalo de nuevo.");
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
