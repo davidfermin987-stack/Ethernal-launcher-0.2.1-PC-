@@ -442,5 +442,82 @@
 
     renderEventPanel();
   </script>
+
+  <script>
+// --- SISTEMA DE BLOQUEO GLOBAL DE EVENTOS (sin tocar nada más del código original) ---
+document.addEventListener("DOMContentLoaded", () => {
+  const switches = document.querySelectorAll(".event-switch");
+  const playButton = document.getElementById("playButton");
+  const eventButtons = document.querySelectorAll(".event-button");
+
+  // Cargar estados guardados
+  const savedStates = JSON.parse(localStorage.getItem("eventStates")) || {};
+
+  // Aplicar estados guardados
+  switches.forEach(sw => {
+    const eventName = sw.dataset.event;
+    if (savedStates[eventName] === false) {
+      sw.checked = false;
+    } else {
+      sw.checked = true;
+    }
+  });
+
+  // Bloquear eventos según estado guardado
+  eventButtons.forEach(btn => {
+    const eventName = btn.dataset.event;
+    if (savedStates[eventName] === false) {
+      btn.classList.add("disabled-event");
+    } else {
+      btn.classList.remove("disabled-event");
+    }
+  });
+
+  // Cambiar estado desde el panel admin
+  switches.forEach(sw => {
+    sw.addEventListener("change", () => {
+      const eventName = sw.dataset.event;
+      savedStates[eventName] = sw.checked;
+      localStorage.setItem("eventStates", JSON.stringify(savedStates));
+
+      // Actualizar apariencia
+      const eventButton = document.querySelector(.event-button[data-event="${eventName}"]);
+      if (eventButton) {
+        if (sw.checked) {
+          eventButton.classList.remove("disabled-event");
+        } else {
+          eventButton.classList.add("disabled-event");
+        }
+      }
+    });
+  });
+
+  // Bloquear el botón de jugar si el evento está deshabilitado
+  if (playButton) {
+    playButton.addEventListener("click", (e) => {
+      const activeEvent = document.querySelector(".event-button.active");
+      if (activeEvent) {
+        const eventName = activeEvent.dataset.event;
+        if (savedStates[eventName] === false) {
+          e.preventDefault();
+          alert("❌ Este evento está deshabilitado temporalmente por un administrador.");
+          return;
+        }
+      }
+    });
+  }
+});
+
+// --- Estilo simple para eventos deshabilitados (sin alterar lo existente) ---
+const style = document.createElement("style");
+style.textContent = `
+  .disabled-event {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(80%);
+  }
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html>
