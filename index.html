@@ -19,19 +19,13 @@
       transition: background 1s ease-in-out;
     }
 
-    .fade {
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade.show {
-      opacity: 1;
-    }
+    .fade { opacity: 0; transition: opacity 1s ease-in-out; }
+    .fade.show { opacity: 1; }
 
     #logo {
-      width: 350px;
-      margin-top: 40px;
-      filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.5));
+      width: 500px;
+      margin-top: 60px;
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
       transition: opacity 1s ease-in-out;
     }
 
@@ -81,10 +75,30 @@
       transform: scale(1.1);
     }
 
+    #addInstanceBtn {
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border: 2px solid #00bfff;
+      color: white;
+      font-size: 40px;
+      cursor: pointer;
+      line-height: 70px;
+      text-align: center;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+    }
+
+    #addInstanceBtn:hover {
+      background: rgba(0, 0, 0, 0.6);
+      transform: scale(1.1);
+    }
+
     #playButton {
       background-color: rgba(0, 0, 60, 0.7);
       border: none;
-      padding: 15px 90px;
+      padding: 15px 80px;
       font-size: 22px;
       color: white;
       border-radius: 15px;
@@ -92,7 +106,7 @@
       margin-top: 40px;
       transition: all 0.3s ease;
       position: fixed;
-      bottom: 80px;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -135,10 +149,7 @@
       text-align: left;
     }
 
-    #adminPanel h3 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    #adminPanel h3 { text-align: center; margin-bottom: 20px; }
 
     .toggle {
       display: flex;
@@ -159,8 +170,105 @@
       transition: all 0.3s ease;
     }
 
-    .toggle button:hover {
-      background: rgba(0, 0, 150, 0.8);
+    .toggle button:hover { background: rgba(0, 0, 150, 0.8); }
+
+    /* Panel de instancias */
+    #instancesPanel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      width: 70%;
+      height: 70%;
+      border-radius: 20px;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    #instancesPanel h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    #closeInstances {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      color: white;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .instance-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 50px;
+    }
+
+    .instance-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 15px;
+      cursor: pointer;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .instance-card:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+
+    .instance-card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    /* Panel de confirmación */
+    #confirmPanel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 15px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .confirm-buttons button {
+      padding: 10px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #acceptBtn {
+      background: green;
+      color: white;
+    }
+
+    #cancelBtn {
+      background: gray;
+      color: white;
     }
   </style>
 </head>
@@ -169,10 +277,8 @@
   <img id="event-logo" src="" alt="Evento" />
 
   <div class="event-panel">
-    <div class="event-selector">
-      <!-- 🔹 Los eventos iniciales se ocultarán dinámicamente -->
-    </div>
-    <button id="addInstance" class="event-icon" style="font-size:28px; font-weight:bold;">+</button>
+    <div class="event-selector" id="eventSelector"></div>
+    <div id="addInstanceBtn">+</div>
   </div>
 
   <button id="playButton">JUGAR</button>
@@ -195,153 +301,246 @@
   </div>
 
   <!-- Panel de instancias -->
-  <div id="instancePanel" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; backdrop-filter:blur(8px); background:rgba(0,0,0,0.6); justify-content:center; align-items:center; flex-direction:column; color:white;">
-    <div style="background:rgba(20,20,20,0.8); border-radius:15px; padding:40px; width:70%; max-width:700px; position:relative; text-align:center;">
-      <button id="closeInstance" style="position:absolute; top:15px; right:20px; background:none; border:none; color:white; font-size:28px; cursor:pointer;">✖</button>
-      <h2>Instancias</h2>
-      <p style="opacity:0.8;">No hay instancias disponibles</p>
-      <div class="instance-gallery" style="display:flex; gap:30px; justify-content:center; margin-top:30px;">
-        <div class="instance-card" data-name="Pesadilla Hardcore" data-img="pesadilla.png" style="background:rgba(255,255,255,0.1); border-radius:10px; padding:10px; cursor:pointer;">
-          <img src="pesadilla.png" style="width:100px; height:100px; border-radius:10px;">
-          <p>Pesadilla Hardcore</p>
-        </div>
-        <div class="instance-card" data-name="Build Ethernal Battle" data-img="build.png" style="background:rgba(255,255,255,0.1); border-radius:10px; padding:10px; cursor:pointer;">
-          <img src="build.png" style="width:100px; height:100px; border-radius:10px;">
-          <p>Build Ethernal Battle</p>
-        </div>
-        <div class="instance-card" data-name="Infección Hardcore" data-img="infeccion.png" style="background:rgba(255,255,255,0.1); border-radius:10px; padding:10px; cursor:pointer;">
-          <img src="infeccion.png" style="width:100px; height:100px; border-radius:10px;">
-          <p>Infección Hardcore</p>
-        </div>
+  <div id="instancesPanel">
+    <button id="closeInstances">✖</button>
+    <h2>Instancias</h2>
+    <div class="instance-gallery">
+      <div class="instance-card" data-id="pesadilla">
+        <img src="pesadilla.png" alt="Pesadilla">
+        <p>Pesadilla Hardcore</p>
+      </div>
+      <div class="instance-card" data-id="build">
+        <img src="build.png" alt="Build">
+        <p>Build Ethernal Battle</p>
+      </div>
+      <div class="instance-card" data-id="infeccion">
+        <img src="infeccion.png" alt="Infección">
+        <p>Infección Hardcore</p>
       </div>
     </div>
   </div>
 
   <!-- Panel de confirmación -->
-  <div id="confirmPanel" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; backdrop-filter:blur(8px); background:rgba(0,0,0,0.7); justify-content:center; align-items:center; flex-direction:column; color:white;">
-    <div style="background:rgba(20,20,20,0.85); border-radius:15px; padding:40px; width:400px; text-align:center;">
-      <h3>¿Añadir esta instancia al panel de eventos?</h3>
-      <div style="display:flex; justify-content:center; gap:20px; margin-top:30px;">
-        <button id="acceptAdd" style="background:green; border:none; color:white; padding:10px 20px; border-radius:10px; cursor:pointer;">Aceptar</button>
-        <button id="cancelAdd" style="background:gray; border:none; color:white; padding:10px 20px; border-radius:10px; cursor:pointer;">Cancelar</button>
-      </div>
+  <div id="confirmPanel">
+    <p>¿Quieres añadir esta instancia al panel de eventos?</p>
+    <div class="confirm-buttons">
+      <button id="acceptBtn">Aceptar</button>
+      <button id="cancelBtn">Cancelar</button>
     </div>
   </div>
 
-  <!-- 🔹 Script principal -->
   <script>
-    // Tu código original completo aquí (no modificado)...
-  </script>
+    const events = {
+      pesadilla: { fondo: 'fondo_pesadilla.jpg', logo: 'logo_pesadilla.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' },
+      build: { fondo: 'fondo_build.jpg', logo: 'logo_build.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' },
+      infeccion: { fondo: 'fondo_infeccion.jpg', logo: 'logo_infeccion.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240' }
+    };
 
-  <!-- 🔹 Script de gestión de instancias (añadido) -->
-  <script>
-    const instancePanel = document.getElementById("instancePanel");
-    const confirmPanel = document.getElementById("confirmPanel");
-    const addButton = document.getElementById("addInstance");
-    const closeButton = document.getElementById("closeInstance");
-    const cancelAdd = document.getElementById("cancelAdd");
-    const acceptAdd = document.getElementById("acceptAdd");
-    let selectedInstance = null;
+    let selectedEvent = null;
+    let userLoggedIn = false;
+    let isAdmin = false;
+    const adminEmails = ["admin1@gmail.com", "admin2@gmail.com", "davidethernal@gmail.com"];
+    let eventStatus = JSON.parse(localStorage.getItem("eventStatus")) || { pesadilla: true, build: true, infeccion: true };
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
-      savedInstances.forEach(inst => addInstanceToPanel(inst.name, inst.img, false));
-    });
+    const eventSelector = document.getElementById('eventSelector');
+    const instancesPanel = document.getElementById('instancesPanel');
+    const confirmPanel = document.getElementById('confirmPanel');
+    let selectedToAdd = null;
 
-    addButton.addEventListener("click", () => {
-      instancePanel.style.display = "flex";
-    });
-
-    closeButton.addEventListener("click", () => {
-      instancePanel.style.display = "none";
-    });
-
-    document.querySelectorAll(".instance-card").forEach(card => {
-      card.addEventListener("click", () => {
-        selectedInstance = {
-          name: card.getAttribute("data-name"),
-          img: card.getAttribute("data-img")
-        };
-        confirmPanel.style.display = "flex";
-        instancePanel.style.display = "none";
-      });
-    });
-
-    cancelAdd.addEventListener("click", () => {
-      confirmPanel.style.display = "none";
-      instancePanel.style.display = "flex";
-    });
-
-    acceptAdd.addEventListener("click", () => {
-      confirmPanel.style.display = "none";
-      if (selectedInstance) {
-        addInstanceToPanel(selectedInstance.name, selectedInstance.img, true);
-        const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
-        savedInstances.push(selectedInstance);
-        localStorage.setItem("userInstances", JSON.stringify(savedInstances));
-      }
-    });
-
-    function addInstanceToPanel(name, imgSrc, save = true) {
-      const existingIcons = Array.from(document.querySelectorAll(".event-icon"))
-        .map(icon => icon.alt.toLowerCase());
-      if (existingIcons.includes(name.toLowerCase())) return;
-
-      const container = document.createElement("div");
-      container.style.position = "relative";
-      container.style.width = "80px";
-      container.style.height = "80px";
-      container.style.marginBottom = "20px";
-      container.classList.add("custom-instance");
-
-      const newIcon = document.createElement("img");
-      newIcon.src = imgSrc;
-      newIcon.alt = name;
-      newIcon.className = "event-icon";
-      newIcon.title = name;
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "🗑";
-      deleteBtn.style.position = "absolute";
-      deleteBtn.style.top = "-10px";
-      deleteBtn.style.right = "-10px";
-      deleteBtn.style.background = "rgba(0,0,0,0.6)";
-      deleteBtn.style.border = "none";
-      deleteBtn.style.color = "white";
-      deleteBtn.style.borderRadius = "50%";
-      deleteBtn.style.cursor = "pointer";
-      deleteBtn.style.fontSize = "14px";
-      deleteBtn.style.padding = "3px 5px";
-      deleteBtn.style.display = "none";
-      deleteBtn.style.transition = "opacity 0.3s ease";
-
-      container.addEventListener("mouseenter", () => (deleteBtn.style.display = "block"));
-      container.addEventListener("mouseleave", () => (deleteBtn.style.display = "none"));
-
-      deleteBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        container.remove();
-        const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
-        const updated = savedInstances.filter(inst => inst.name !== name);
-        localStorage.setItem("userInstances", JSON.stringify(updated));
-      });
-
-      const addBtn = document.getElementById("addInstance");
-      addBtn.parentNode.insertBefore(container, addBtn);
-
-      container.appendChild(newIcon);
-      container.appendChild(deleteBtn);
-
-      newIcon.addEventListener("click", () => {
-        alert(`Evento "${name}" seleccionado ✅`);
-      });
-
-      if (save) {
-        const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
-        savedInstances.push({ name, img: imgSrc });
-        localStorage.setItem("userInstances", JSON.stringify(savedInstances));
+    function updateAdminButtons() {
+      for (const e in eventStatus) {
+        const btn = document.getElementById("toggle" + e.charAt(0).toUpperCase() + e.slice(1));
+        if (!btn) continue;
+        btn.textContent = eventStatus[e] ? "ON" : "OFF";
+        btn.style.background = eventStatus[e] ? "rgba(0,0,100,0.6)" : "rgba(100,0,0,0.6)";
       }
     }
-  </script>
+
+    function addEventIcon(id) {
+      if (document.getElementById(id)) return;
+      const img = document.createElement('img');
+      img.src = id + '.png';
+      img.id = id;
+      img.className = 'event-icon';
+      img.alt = id;
+      img.addEventListener('click', () => selectEvent(id));
+      eventSelector.appendChild(img);
+    }
+
+    function selectEvent(id) {
+      document.querySelectorAll('.event-icon').forEach(i => i.classList.remove('active'));
+      const icon = document.getElementById(id);
+      icon.classList.add('active');
+      const event = events[id];
+      selectedEvent = event;
+      document.body.classList.add('fade');
+      setTimeout(() => {
+        document.body.style.backgroundImage = url('${event.fondo}');
+        document.body.classList.remove('fade');
+      }, 500);
+      document.getElementById('logo').style.display = 'none';
+      const eventLogo = document.getElementById('event-logo');
+      eventLogo.src = event.logo;
+      eventLogo.style.display = 'block';
+      eventLogo.classList.add('show');
+    }
+
+    document.getElementById('addInstanceBtn').onclick = () => {
+      instancesPanel.style.display = 'flex';
+    };
+    document.getElementById('closeInstances').onclick = () => {
+      instancesPanel.style.display = 'none';
+    };
+
+    document.querySelectorAll('.instance-card').forEach(card => {
+      card.onclick = () => {
+        selectedToAdd = card.dataset.id;
+        confirmPanel.style.display = 'flex';
+      };
+    });
+
+    document.getElementById('acceptBtn').onclick = () => {
+      addEventIcon(selectedToAdd);
+      confirmPanel.style.display = 'none';
+      instancesPanel.style.display = 'none';
+    };
+
+    document.getElementById('cancelBtn').onclick = () => {
+      confirmPanel.style.display = 'none';
+    };
+
+    document.getElementById('playButton').addEventListener('click', () => {
+      if (!userLoggedIn) return alert('⚠️ Debes iniciar sesión con Microsoft antes de jugar.');
+      if (!selectedEvent) return alert('Selecciona un evento primero.');
+      const id = Object.keys(events).find(key => events[key] === selectedEvent);
+      if (!eventStatus[id]) return alert('🚫 Este evento está deshabilitado por un administrador.');
+      window.location.href = selectedEvent.link;
+    });
+
+    updateAdminButtons();
+  <script>
+  const instancePanel = document.getElementById("instancePanel");
+  const confirmPanel = document.getElementById("confirmPanel");
+  const addButton = document.getElementById("addInstance");
+  const closeButton = document.getElementById("closeInstance");
+  const cancelAdd = document.getElementById("cancelAdd");
+  const acceptAdd = document.getElementById("acceptAdd");
+  let selectedInstance = null;
+
+  // 🔹 Recuperar instancias guardadas al cargar la página
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
+    savedInstances.forEach(inst => addInstanceToPanel(inst.name, inst.img, false));
+  });
+
+  // 🔹 Abrir panel de instancias
+  addButton.addEventListener("click", () => {
+    instancePanel.style.display = "flex";
+  });
+
+  // 🔹 Cerrar panel
+  closeButton.addEventListener("click", () => {
+    instancePanel.style.display = "none";
+  });
+
+  // 🔹 Click en una instancia (mostrar confirmación)
+  document.querySelectorAll(".instance-card").forEach(card => {
+    card.addEventListener("click", () => {
+      selectedInstance = {
+        name: card.getAttribute("data-name"),
+        img: card.getAttribute("data-img")
+      };
+      confirmPanel.style.display = "flex";
+      instancePanel.style.display = "none";
+    });
+  });
+
+  // 🔹 Cancelar agregar
+  cancelAdd.addEventListener("click", () => {
+    confirmPanel.style.display = "none";
+    instancePanel.style.display = "flex";
+  });
+
+  // 🔹 Aceptar y añadir instancia al panel lateral
+  acceptAdd.addEventListener("click", () => {
+    confirmPanel.style.display = "none";
+    if (selectedInstance) {
+      addInstanceToPanel(selectedInstance.name, selectedInstance.img, true);
+
+      // Guardar en localStorage
+      const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
+      savedInstances.push(selectedInstance);
+      localStorage.setItem("userInstances", JSON.stringify(savedInstances));
+    }
+  });
+
+  // 🔹 Crear icono en panel lateral (ahora con botón eliminar)
+  function addInstanceToPanel(name, imgSrc, save = true) {
+    const existingIcons = Array.from(document.querySelectorAll(".event-icon"))
+      .map(icon => icon.alt.toLowerCase());
+    if (existingIcons.includes(name.toLowerCase())) return;
+
+    // Crear contenedor
+    const container = document.createElement("div");
+    container.style.position = "relative";
+    container.style.width = "80px";
+    container.style.height = "80px";
+    container.style.marginBottom = "20px";
+    container.classList.add("custom-instance");
+
+    const newIcon = document.createElement("img");
+    newIcon.src = imgSrc;
+    newIcon.alt = name;
+    newIcon.className = "event-icon";
+    newIcon.title = name;
+
+    // 🔹 Botón de eliminar
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑";
+    deleteBtn.style.position = "absolute";
+    deleteBtn.style.top = "-10px";
+    deleteBtn.style.right = "-10px";
+    deleteBtn.style.background = "rgba(0,0,0,0.6)";
+    deleteBtn.style.border = "none";
+    deleteBtn.style.color = "white";
+    deleteBtn.style.borderRadius = "50%";
+    deleteBtn.style.cursor = "pointer";
+    deleteBtn.style.fontSize = "14px";
+    deleteBtn.style.padding = "3px 5px";
+    deleteBtn.style.display = "none";
+    deleteBtn.style.transition = "opacity 0.3s ease";
+
+    // Mostrar botón al pasar el mouse
+    container.addEventListener("mouseenter", () => (deleteBtn.style.display = "block"));
+    container.addEventListener("mouseleave", () => (deleteBtn.style.display = "none"));
+
+    // Eliminar instancia
+    deleteBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      container.remove();
+      const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
+      const updated = savedInstances.filter(inst => inst.name !== name);
+      localStorage.setItem("userInstances", JSON.stringify(updated));
+    });
+
+    const addBtn = document.getElementById("addInstance");
+    addBtn.parentNode.insertBefore(container, addBtn);
+
+    container.appendChild(newIcon);
+    container.appendChild(deleteBtn);
+
+    // Al hacer clic en el icono, simular selección de evento
+    newIcon.addEventListener("click", () => {
+      alert(Evento "${name}" seleccionado ✅);
+    });
+
+    // Guardar si es nuevo
+    if (save) {
+      const savedInstances = JSON.parse(localStorage.getItem("userInstances")) || [];
+      savedInstances.push({ name, img: imgSrc });
+      localStorage.setItem("userInstances", JSON.stringify(savedInstances));
+    }
+  }
+</script>
 </body>
 </html>
