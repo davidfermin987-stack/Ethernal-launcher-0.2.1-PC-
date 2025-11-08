@@ -442,82 +442,144 @@
 
     renderEventPanel();
   </script>
+  
+</script>
+/* ---------- Lógica de ON/OFF para tu HTML actual ---------- */
+/* Pegar justo antes de </body> */
 
-  <script>
-// --- SISTEMA DE BLOQUEO GLOBAL DE EVENTOS (sin tocar nada más del código original) ---
-document.addEventListener("DOMContentLoaded", () => {
-  const switches = document.querySelectorAll(".event-switch");
+(function(){
+  // nombres de eventos que manejas
+  const eventKeys = ["pesadilla", "build", "infeccion"];
+
+  // selectores de los botones admin (tus botones actuales)
+  const adminButtons = {
+    pesadilla: document.getElementById("togglePesadilla"),
+    build:     document.getElementById("toggleBuild"),
+    infeccion: document.getElementById("toggleInfeccion")
+  };
+
   const playButton = document.getElementById("playButton");
-  const eventButtons = document.querySelectorAll(".event-button");
 
-  // Cargar estados guardados
-  const savedStates = JSON.parse(localStorage.getItem("eventStates")) || {};
-
-  // Aplicar estados guardados
-  switches.forEach(sw => {
-    const eventName = sw.dataset.event;
-    if (savedStates[eventName] === false) {
-      sw.checked = false;
-    } else {
-      sw.checked = true;
+  // guardar/leer en localStorage (clave: eventStates)
+  function loadStates() {
+    try {
+      return JSON.parse(localStorage.getItem("eventStates")) || {};
+    } catch(e) {
+      return {};
     }
-  });
+  }
+  function saveStates(s) {
+    localStorage.setItem("eventStates", JSON.stringify(s));
+  }
 
-  // Bloquear eventos según estado guardado
-  eventButtons.forEach(btn => {
-    const eventName = btn.dataset.event;
-    if (savedStates[eventName] === false) {
-      btn.classList.add("disabled-event");
-    } else {
-      btn.classList.remove("disabled-event");
-    }
-  });
+  // inicializar con true por defecto
+  const states = (() => {
+    const s = loadStates();
+    eventKeys.forEach(k => { if (s[k] === undefined) s[k] = true; });
+    saveStates(s);
+    return s;
+  })();
 
-  // Cambiar estado desde el panel admin
-  switches.forEach(sw => {
-    sw.addEventListener("change", () => {
-      const eventName = sw.dataset.event;
-      savedStates[eventName] = sw.checked;
-      localStorage.setItem("eventStates", JSON.stringify(savedStates));
+  // aplica estilos/texto a los botones admin según state
+  function applyAdminButtons() {
+    eventKeys.forEach(k => {
+      const btn = adminButtons[k];
+      if (!btn) return;
+      const on = !!states[k];
+      btn.textContent = on ? "ON" : "OFF";
+      btn.style.background = on ? "rgba(0,0,100,0.6)" : "rgba(100,0,0,0.6)";
+    });
+  }
 
-      // Actualizar apariencia
-      const eventButton = document.querySelector(.event-button[data-event="${eventName}"]);
-      if (eventButton) {
-        if (sw.checked) {
-          eventButton.classList.remove("disabled-event");
-        } else {
-          eventButton.classList.add("disabled-event");
-        }
+  // aplica bloqueo visual y funcional a iconos en panel de eventos
+  function applyEventIcons() {
+    eventKeys.forEach(k => {
+      // iconos en el panel de eventos usan id = nombre del evento
+      const icon = document.getElementById(k);
+      if (!icon) return;
+      if (!states[k]) {
+        // estilo disabled
+        icon.classList.add("disabled-event");
+        // evitar clicks
+        icon.style.pointerEvents = "none";
+        icon.style.opacity = "0.45";
+        icon.style.filter = "grayscale(80%)";
+      } else {
+        icon.classList.remove("disabled-event");
+        icon.style.pointerEvents = "";
+        icon.style.opacity = "";
+        icon.style.filter = "";
       }
     });
-  });
+  }
 
-  // Bloquear el botón de jugar si el evento está deshabilitado
+  // Si tu lógica usa selectedEvent (obj), la función para obtener su id:
+  function getSelectedEventId() {
+    // tu variable selectedEvent es un objeto event (en tu script principal)
+    // aquí lo intentamos buscar por comparación de referencias primero
+    try {
+      if (window.selectedEvent) {
+        for (const k of eventKeys) {
+          if (window.selectedEvent === window.events[k]) return k;
+        }
+      }
+    } catch(e) { /* ignore */ }
+    // fallback: buscar icon con clase active dentro del panel
+    const activeIcon = document.querySelector(".event-panel .event-selector .event-icon.active");
+    if (activeIcon && activeIcon.id) return activeIcon.id;
+    // si no hay ninguno seleccionado, null
+    return null;
+  }
+
+  // impedir jugar si el evento está deshabilitado
   if (playButton) {
-    playButton.addEventListener("click", (e) => {
-      const activeEvent = document.querySelector(".event-button.active");
-      if (activeEvent) {
-        const eventName = activeEvent.dataset.event;
-        if (savedStates[eventName] === false) {
-          e.preventDefault();
-          alert("❌ Este evento está deshabilitado temporalmente por un administrador.");
-          return;
-        }
+    playButton.addEventListener("click", function(e){
+      const id = getSelectedEventId();
+      if (id && states[id] === false) {
+        e.preventDefault();
+        alert("❌ Este evento está deshabilitado temporalmente por un administrador.");
       }
+      // si no hay seleccionado, tu otro código ya muestra alerta; aquí no hacemos nada más
     });
   }
-});
 
-// --- Estilo simple para eventos deshabilitados (sin alterar lo existente) ---
-const style = document.createElement("style");
-style.textContent = `
-  .disabled-event {
-    opacity: 0.4;
-    pointer-events: none;
-    filter: grayscale(80%);
-  }
-`;
-document.head.appendChild(style);
+  // añadir listeners a botones admin para togglear el estado
+  eventKeys.forEach(k => {
+    const btn = adminButtons[k];
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      // sólo si existe el botón (como en tu HTML)
+      states[k] = !states[k];
+      saveStates(states);
+      applyAdminButtons();
+      applyEventIcons();
+    });
+  });
+
+  // estilos visuales para disabled (inyectar minimal CSS seguro)
+  const css = `
+    .disabled-event { opacity: 0.45 !important; pointer-events: none !important; filter: grayscale(80%) !important; }
+  `;
+  const styleEl = document.createElement("style");
+  styleEl.innerText = css;
+  document.head.appendChild(styleEl);
+
+  // aplicar todo inicialmente
+  applyAdminButtons();
+  applyEventIcons();
+
+  // también observar cambios si tu script principal re-renderiza la lista dinámica
+  // (por si las imágenes de eventos se recrean) — reaplicar cada 700ms cuando haya cambios
+  let lastIcons = null;
+  setInterval(() => {
+    const iconsNow = Array.from(document.querySelectorAll(".event-panel .event-selector .event-icon")).map(n=>n.id).join(",");
+    if (iconsNow !== lastIcons) {
+      lastIcons = iconsNow;
+      applyEventIcons();
+    }
+  }, 700);
+
+})();
 </script>
 </body>
 </html>
