@@ -309,26 +309,18 @@
     <div class="toggle"><span>Infección</span><button id="toggleInfeccion">ON</button></div>
   </div>
 
-<script>
-const adminEmails = [
-    "admin1@gmail.com",
-    "admin2@gmail.com"
-];
-    
+  <script>
+    // ✅ Correos de administradores permitidos
+    const adminEmails = ["davidfermin987@gmail.com", "davidfermin876@gmail.com"];
+
+    // Eventos principales
     const events = {
       pesadilla: { fondo: 'fondo_pesadilla.jpg', logo: 'logo_pesadilla.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240', icon: 'pesadilla.png' },
       build: { fondo: 'fondo_build.jpg', logo: 'logo_build.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240', icon: 'build.png' },
       infeccion: { fondo: 'fondo_infeccion.jpg', logo: 'logo_infeccion.png', link: 'minecraft://connect/?serverUrl=na81.aternos.me&serverPort=60240', icon: 'infeccion.png' }
     };
 
-    // Aquí sigue todo tu código original…
-
-    // 🚀 *Modificación para que NO se requiera iniciar sesión*
-    playButton.addEventListener("click", () => {
-      window.location.href = currentEvent.link;
-    });
-
-    // 📱 Modo móvil
+    // 📱 Ajuste solo si es móvil
     if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       document.body.style.overflowY = "auto";
       document.querySelector(".event-panel").style.width = "160px";
